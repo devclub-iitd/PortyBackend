@@ -4,8 +4,8 @@
   "private": false,
   "scripts": {
     "start": "npm run prod",
-    "server": "babel-node ./src/bin/www",
-    "server:prod": "node ./dist/bin/www",
+    "server": "babel-node ./src/server",
+    "server:prod": "node ./dist/server",
     "dev": "NODE_ENV=development npm-run-all server",
     "clean": "rimraf dist",
     "build": "babel ./src --out-dir dist",
@@ -13,10 +13,12 @@
     "watch": "nodemon"
   },
   "dependencies": {
-    "cookie-parser": "~1.4.4",
-    "debug": "~4.1.1",
-    "express": "~4.17.0",
-    "morgan": "~1.9.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "express-validator": "^5.3.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.5.12",
     "npm-run-all": "^4.1.5",
     "rimraf": "^2.6.3"
   },
@@ -31,6 +33,18 @@
     "eslint-plugin-import": "^2.17.2",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.13.0",
-    "nodemon": "^1.19.0"
-  }
+    "nodemon": "^1.19.1"
+  },
+  "description": "This repo is for the backend of the automated Portfolio website maker.",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/devclub-iitd/PortyBackend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/devclub-iitd/PortyBackend/issues"
+  },
+  "homepage": "https://github.com/devclub-iitd/PortyBackend#readme"
 }
