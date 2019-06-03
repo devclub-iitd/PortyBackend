@@ -4,8 +4,8 @@
   "private": false,
   "scripts": {
     "start": "npm run prod",
-    "server": "babel-node ./src/bin/www",
-    "server:prod": "node ./dist/bin/www",
+    "server": "babel-node ./src/server",
+    "server:prod": "node ./dist/server",
     "dev": "NODE_ENV=development npm-run-all server",
     "clean": "rimraf dist",
     "build": "babel ./src --out-dir dist",
@@ -15,20 +15,12 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
-    "config": "^3.1.0",
-    "cookie-parser": "~1.4.4",
-    "debug": "~4.1.1",
     "express": "^4.17.1",
     "express-validator": "^5.3.1",
     "jsonwebtoken": "^8.5.1",
-    "mongo": "^0.1.0",
-    "mongodb": "^3.2.6",
     "mongoose": "^5.5.12",
-    "morgan": "~1.9.1",
     "npm-run-all": "^4.1.5",
-    "request": "^2.88.0",
-    "rimraf": "^2.6.3",
-    "swagger": "^0.7.5"
+    "rimraf": "^2.6.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
@@ -47,12 +39,12 @@
   "main": "server.js",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/bicycleman15/PortyBackend.git"
+    "url": "git+ssh://git@github.com/devclub-iitd/PortyBackend.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/bicycleman15/PortyBackend/issues"
+    "url": "https://github.com/devclub-iitd/PortyBackend/issues"
   },
-  "homepage": "https://github.com/bicycleman15/PortyBackend#readme"
+  "homepage": "https://github.com/devclub-iitd/PortyBackend#readme"
 }
