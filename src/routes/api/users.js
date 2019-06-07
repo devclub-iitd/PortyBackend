@@ -4,14 +4,20 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { secretkey } from '../../config/keys';
 import User from '../../models/users';
+const nodemailer = require("nodemailer");
+const regeneratorRuntime = require("regenerator-runtime");
+import { verify } from 'jsonwebtoken';
+
 
 const router = express.Router();
 
+//find all users
 router.get('/', (req, res) => {
   User.find()
     .then(users => res.json(users));
 });
 
+//create a new user
 router.post('/', [
   check('name', 'Name is Required').not().isEmpty(),
   check('email', 'Not Valid Email').isEmail(), // here we need to add valid IIT email address,so I need to add condtions for that also
@@ -37,6 +43,8 @@ router.post('/', [
 
     // also need to add email verifier via otp
 
+
+
     // encrypt the password using bcrypt
     const salt = await bcrypt.genSalt(10); // which to use 10 or more than that
 
@@ -54,12 +62,47 @@ router.post('/', [
     };
 
     jwt.sign(payload, secretkey, { expiresIn: 3600 },
-      (err, token) => {
-        if (err) {
+     async (err, token) => {
+        
+      if (err) {
           console.log(err);
           return null;
         }
-        return res.send({ token });
+        // return res.send({ token });
+        
+        //here send the mail
+        try{
+        let transporter = nodemailer.createTransport({
+          host: 'smtp.ethereal.email',
+    port: 587,
+    auth: {
+        user: 'pearl.osinski81@ethereal.email',
+        pass: 'HnhJH9D6QVSCcQAuEp'
+    }
+        });
+      
+        // send mail with defined transport object
+        let info = await transporter.sendMail({
+          from: '"jatinprakash 👻" <jatin000005@gmail.com>', // sender address
+          to: user.email, // list of receivers
+          subject: "Hello ✔", // Subject line
+          text: `http://localhost:5000/api/user/verify/${token}`, // plain text body
+          html: `<b>http://localhost:5000/api/user/verify/${token}</b>` // html body
+        });
+      
+        console.log("Message sent: %s", info.messageId);
+       
+      
+        // Preview only available when sending through an Ethereal account
+        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+        
+
+        //////
+        return res.json({msg : 'We have sent email containing otp'})
+      }
+      catch(err){
+        console.log(err);
+      }
       });
   } catch (err) {
     console.log(err);
@@ -75,5 +118,31 @@ router.delete('/:id', (req, res) => {
     else res.json({ success: true });
   });
 });
+
+router.get('/verify/:jwt',async (req,res) =>{
+  const token  = req.params.jwt;
+
+  if (!token) {
+    return res.status(401).json({ msg: 'Authorization denied as no token present' });
+  }
+
+  try {
+    const decoded = verify(token, secretkey);
+     // this will give us the user:id in req.user.id
+    const founduser = await User.findById(decoded.user.id).select('-password');
+
+    founduser.isverified = true;
+
+    //console.log(founduser);
+    await founduser.save();
+
+    res.status(200).json({msg: 'Your account has been verified..Please login to access your account'})
+
+    
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ msg: 'Token not valid' });
+  }
+})
 
 export default router;
