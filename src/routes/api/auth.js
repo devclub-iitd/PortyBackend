@@ -18,6 +18,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+//login 
 router.post('/', [
   check('email', 'email is Required').not().isEmpty(),
   check('password', 'password is Required').not().isEmpty(),
@@ -42,6 +43,10 @@ router.post('/', [
 
     if (!isMatch) {
       return res.status(400).json({ errors: [{ msg: 'invalid login details' }] });
+    }
+
+    if(!user.isverified){
+      return res.status(400).json({erros : [{ msg : 'Your account has not been verified'}]})
     }
 
     // return webtoken
