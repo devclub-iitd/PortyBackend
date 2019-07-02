@@ -5,6 +5,7 @@ import jwt, { verify } from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import { secretkey } from '../../config/keys';
 import User from '../../models/users';
+import 'babel-polyfill';
 
 
 const router = express.Router();
@@ -34,7 +35,7 @@ router.post('/', [
     let user = await User.findOne({ email });
 
     if (user) {
-      return res.status(400).json({ errors: [{ msg: 'user already exists' }] });
+      return res.status(200).json({ errors: [{ msg: 'user already exists' }] });
     }
 
     user = new User(req.body);
@@ -93,7 +94,7 @@ router.post('/', [
           console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
 
 
-          // ////
+          
           return res.json({ msg: 'We have sent email containing otp' });
         } catch (err_) {
           console.log(err_);
