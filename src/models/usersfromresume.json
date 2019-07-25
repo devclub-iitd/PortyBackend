@@ -1,26 +1,20 @@
 {
-    "basics": {
-        "name": "John Doe",
-        "label": "Programmer",
-        "picture": "",
-        "email": "john@gmail.com",
-        "phone": "(912) 555-4321",
-        "website": "http://johndoe.com",
-        "summary": "A summary of John Doe...",
-        "location": {
-            "address": "2712 Broadway St",
-            "postalCode": "CA 94115",
-            "city": "San Francisco",
-            "countryCode": "US",
-            "region": "California"
-        },
-        "profiles": [
-            {
-                "network": "Twitter",
-                "username": "john",
-                "url": "http://twitter.com/john"
-            }
-        ]
+    "_id": "5ce44f999ba58824b41bbc77",
+    "user": {
+        "_id": "5ce43f5d4accf6224ecbc891",
+        "email": "jatinprakash1511@gmail.com",
+        "name": "Jatin Prakash"
+    },
+    "entryno": "2108cs10344",
+    "age": "18",
+    "phone": "9899727204",
+    "aboutme" : "i like to cook",
+    "location": {
+        "address": "2712 Broadway St",
+        "postalCode": "CA 94115",
+        "city": "San Francisco",
+        "countryCode": "US",
+        "region": "California"
     },
     "work": [
         {
@@ -29,10 +23,7 @@
             "website": "http://company.com",
             "startDate": "2013-01-01",
             "endDate": "2014-01-01",
-            "summary": "Description...",
-            "highlights": [
-                "Started the company"
-            ]
+            "summary": "Description..."    
         }
     ],
     "volunteer": [
@@ -42,23 +33,17 @@
             "website": "http://organization.com/",
             "startDate": "2012-01-01",
             "endDate": "2013-01-01",
-            "summary": "Description...",
-            "highlights": [
-                "Awarded 'Volunteer of the Month'"
-            ]
+            "summary": "Description..."
         }
     ],
     "education": [
         {
             "institution": "University",
             "area": "Software Development",
-            "studyType": "Bachelor",
+            "degree": "Bachelor",
             "startDate": "2011-01-01",
             "endDate": "2013-01-01",
-            "gpa": "4.0",
-            "courses": [
-                "DB1101 - Basic SQL"
-            ]
+            "gpa": "4.0"
         }
     ],
     "awards": [

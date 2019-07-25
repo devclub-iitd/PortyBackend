@@ -46,7 +46,7 @@ router.post('/', [
     }
 
     if (!user.isverified) {
-      return res.status(400).json({ erros: [{ msg: 'Your account has not been verified' }] });
+      return res.status(400).json({ errors: [{ msg: 'Your account has not been verified' }] });
     }
 
     // return webtoken

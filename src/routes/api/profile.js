@@ -11,7 +11,7 @@ router.get('/me', auth, async (req, res) => {
       ['name', 'email']);
 
     if (!profileUser) {
-      return res.status(401).json({ msg: "User hasn't set up his/her profile yet" });
+      return res.status(400).json({ msg: "User hasn't set up his/her profile yet" });
     }
 
     return res.json(profileUser);
@@ -29,15 +29,35 @@ router.post('/', auth, async (req, res) => {
     age,
     phone,
     education,
-  } = req.body;
+    work,
+    location,
+    volunteer,
+    awards,
+    skills,
+    languages,
+    interests,
+    references,
+    publications,
+    dob
+} = req.body;
 
   // Build profile object
   const profileFields = {};
   profileFields.user = req.user.id;
-  profileFields.entryno = entryno;
-  profileFields.age = age;
-  profileFields.phone = phone;
-  profileFields.education = education;
+  if (dob) profileFields.dob = dob;
+  if (entryno) profileFields.entryno = entryno;
+  if (age) profileFields.age = age;
+  if (phone) profileFields.phone = phone;
+  if (education) profileFields.education = education;
+  if (work) profileFields.work = work;
+  if (volunteer) profileFields.volunteer = volunteer;
+  if (awards) profileFields.awards = awards;
+  if (publications) profileFields.publications = publications;
+  if (skills) profileFields.skills = skills;
+  if (languages) profileFields.languages = languages;
+  if (interests) profileFields.interests = interests;
+  if (references) profileFields.references = references;
+  if (location) profileFields.location = location;
 
   try {
     let profile = await Profile.findOne({ user: req.user.id });
