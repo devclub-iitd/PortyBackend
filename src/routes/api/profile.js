@@ -7,7 +7,7 @@ const router = express.Router();
 // get profile for logged in user by accessing api/profile/me carrying a jwt
 router.get('/me', auth, async (req, res) => {
   try {
-    const profileUser = await Profile.find({ user: req.user.id }).populate('user',
+    const profileUser = await Profile.findOne({ user: req.user.id }).populate('user',
       ['name', 'email']);
 
     if (!profileUser) {
