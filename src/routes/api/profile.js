@@ -1,6 +1,7 @@
 import express from 'express';
 import auth from '../../middleware/auth';
 import Profile from '../../models/profile';
+const fs = require('fs');
 
 const router = express.Router();
 
@@ -13,13 +14,18 @@ router.get('/me', auth, async (req, res) => {
     if (!profileUser) {
       return res.status(400).json({ msg: "User hasn't set up his/her profile yet" });
     }
-
+    fs.writeFile('file.txt', JSON.stringify(profileUser), (err) => {
+      // throws an error, you could also catch it here
+      if (err) return res.status(500).send('Server Error');
+    });
     return res.json(profileUser);
   } catch (err) {
     console.log(err);
     return res.status(500).send('Server Error');
   }
 });
+
+router.get('/download', (req, res) => res.download('./file.txt'))
 
 
 // post to a user id
@@ -38,13 +44,15 @@ router.post('/', auth, async (req, res) => {
     interests,
     references,
     publications,
-    dob
+    dob,
+    about
 } = req.body;
 
   // Build profile object
   const profileFields = {};
   profileFields.user = req.user.id;
   if (dob) profileFields.dob = dob;
+  if (about) profileFields.about = about;
   if (entryno) profileFields.entryno = entryno;
   if (age) profileFields.age = age;
   if (phone) profileFields.phone = phone;
