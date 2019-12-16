@@ -5,6 +5,26 @@ const fs = require('fs');
 
 const router = express.Router();
 
+// get profile by id for public access by accessing api/profile/user/:user_id
+router.get('/user/:user_id', async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ user : req.params.user_id }).populate(
+      'user',
+      ['name', 'email'],
+    );
+    console.log(profile);
+    if (!profile) return res.status(400).json({ msg: 'Profile not found for this user' });
+
+    return res.json(profile);
+  } catch (error) {
+    console.log(error);
+    if (error.kind === 'ObjectId') {
+      return res.status(400).json({ msg: 'Profile not found for this user' });
+    }
+    return res.status(500).send('Server error');
+  }
+});
+
 // get profile for logged in user by accessing api/profile/me carrying a jwt
 router.get('/me', auth, async (req, res) => {
   try {
@@ -90,23 +110,6 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// get profile by id for public access by accessing api/profile/user/:user_id
-router.get('/user/:user_id', async (req, res) => {
-  try {
-    const profile = await Profile.find({ user: req.params.user_id }).populate(
-      'user',
-      ['name', 'email'],
-    );
-    if (!profile) return res.status(400).json({ msg: 'Profile not found for this user' });
 
-    return res.json(profile);
-  } catch (error) {
-    console.log(error);
-    if (error.kind === 'ObjectId') {
-      return res.status(400).json({ msg: 'Profile not found for this user' });
-    }
-    return res.status(500).send('Server error');
-  }
-});
 
 export default router;
