@@ -1,18 +1,27 @@
 import express from 'express';
 import auth from '../../middleware/auth';
 import Profile from '../../models/profile';
+import User from '../../models/users'
 const fs = require('fs');
 
 const router = express.Router();
 
 // get profile by id for public access by accessing api/profile/user/:user_id
-router.get('/user/:user_id', async (req, res) => {
+router.get('/user/:en', async (req, res) => {
   try {
-    const profile = await Profile.findOne({ user : req.params.user_id }).populate(
+    //await User.findByIdAndDelete("5ddbd5ee09a9bd49c3c7a83c");
+    //console.log(req.params.en)
+    const user_found = await User.findOne({entryno : `${req.params.en}`})
+    //console.log("hello")
+    //console.log(user_found)
+    if(!user_found) return res.status(400).json({ msg: 'User doesnt exists' });
+    
+    const profile = await Profile.findOne({ user : user_found._id }).populate(
       'user',
-      ['name', 'email'],
+      ['name', 'email','entryno'],
     );
-    console.log(profile);
+    //console.log(profile)
+    // console.log(profile);
     if (!profile) return res.status(400).json({ msg: 'Profile not found for this user' });
 
     return res.json(profile);
@@ -33,8 +42,8 @@ router.get('/me', auth, async (req, res) => {
 
     if (!profileUser) {
       return res.status(400).json({ msg: "User hasn't set up his/her profile yet" });
-    }
-    fs.writeFile('file.txt', JSON.stringify(profileUser), (err) => {
+    } 
+    fs.writeFile('file.json', JSON.stringify({profile : profileUser}), (err) => {
       // throws an error, you could also catch it here
       if (err) return res.status(500).send('Server Error');
     });
@@ -45,7 +54,7 @@ router.get('/me', auth, async (req, res) => {
   }
 });
 
-router.get('/download', (req, res) => res.download('./file.txt'))
+router.get('/download', (req, res) => res.download('./file.json'))
 
 
 // post to a user id

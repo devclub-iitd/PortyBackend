@@ -5,6 +5,9 @@ const userSchema = new Schema({
   password: { type: String, required: true },
   name: { type: String, required: true },
   date: { type: Date, default: Date.now },
+  dob : {type : String},
+  phone: { type : String},
+  entryno: {type:String},
   isverified: { type: Boolean, default: false },
 });
 
