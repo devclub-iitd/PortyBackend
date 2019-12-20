@@ -7,13 +7,11 @@ const profileSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'user',
   },
-  entryno: { type: String },
-  age: { type: String },
-  dob: { type: String },
-  phone: { type: String },
   about : { 
     label : {type : String},
-    summary : {type : String}
+    summary : {type : String},
+    number : {type : String},
+    imgUrl : {type : String}
   },
   education: [
     {
@@ -23,7 +21,8 @@ const profileSchema = new Schema({
       startdate: { type: String },
       enddate: { type: String },
       gpa: { type: String },
-      details: { type: String }
+      details: { type: String },
+      hidden: { type: Boolean}
     },
   ],
   work : [
@@ -34,6 +33,7 @@ const profileSchema = new Schema({
       startdate: { type: String },
       enddate: { type: String },
       summary: { type: String },
+      hidden: { type: Boolean}
     }
   ],
   location : {
@@ -42,6 +42,7 @@ const profileSchema = new Schema({
     city: { type: String },
     pincode: { type: String },
     country: { type: String },
+    
   },
   volunteer : [
     {
@@ -51,6 +52,7 @@ const profileSchema = new Schema({
       startdate: { type: String },
       enddate: { type: String },
       summary: { type: String },
+      hidden: { type: Boolean}
     }
   ],
   awards : [
@@ -59,6 +61,7 @@ const profileSchema = new Schema({
       date: { type: String },
       awarder: { type: String },
       details: { type: String },
+      hidden: { type: Boolean}
     }
   ],
   publications : [
@@ -68,6 +71,7 @@ const profileSchema = new Schema({
       releaseDate: { type: String },
       website: { type: String },
       summary: { type: String },
+      hidden: { type: Boolean}
     }
   ],
   skills : [
@@ -75,24 +79,28 @@ const profileSchema = new Schema({
       name: { type: String },
       level: { type: String },
       keywords: { type: String },
+      hidden: { type: Boolean}
     }
   ],
   languages : [
     {
       language: { type: String },
       fluency: { type: String },
+      hidden: { type: Boolean}
     }
   ],
   interests : [
     {
       name: { type: String },
       keywords: { type: String },
+      hidden: { type: Boolean}
     }
   ],
   references : [
     {
       name: { type: String },
       reference: { type: String },
+      hidden: { type: Boolean}
     }
   ],
 });

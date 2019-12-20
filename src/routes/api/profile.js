@@ -43,11 +43,83 @@ router.get('/me', auth, async (req, res) => {
     if (!profileUser) {
       return res.status(400).json({ msg: "User hasn't set up his/her profile yet" });
     } 
+
+    // var newprof = {
+    //   user : profileUser.user,
+    //   about : profileUser.about,
+    //   location : profileUser.location,
+    //   education : [],
+    //   work : [],
+    //   volunteer : [],
+    //   awards : [],
+    //   publications : [],
+    //   skills : [],
+    //   languages : [],
+    //   interests : [],
+    //   references : []
+    // }
+    // var temp_work = profileUser.work;
+    // for(var i=0;i<temp_work.length;i++){
+    //   if(!temp_work[i].hidden) newprof.work.push(temp_work[i]);
+    // }
+
+    // var temp_volunteer = profileUser.volunteer;
+    // for(var i=0;i<temp_volunteer.length;i++){
+    //   if(!temp_volunteer[i].hidden) newprof.volunteer.push(temp_volunteer[i]);
+    // }
+
+    // var temp_awards = profileUser.awards;
+    // for(var i=0;i<temp_awards.length;i++){
+    //   if(!temp_awards[i].hidden) newprof.awards.push(temp_awards[i]);
+    // }
+
+    // var temp_publications = profileUser.publications;
+    // for(var i=0;i<temp_publications.length;i++){
+    //   if(!temp_publications[i].hidden) newprof.publications.push(temp_publications[i]);
+    // }
+
+    // var temp_skills = profileUser.skills;
+    // for(var i=0;i<temp_skills.length;i++){
+    //   if(!temp_skills[i].hidden) newprof.skills.push(temp_skills[i]);
+    // }
+
+    // var temp_languages = profileUser.languages;
+    // for(var i=0;i<temp_languages.length;i++){
+    //   if(!temp_languages[i].hidden) newprof.languages.push(temp_languages[i]);
+    // }
+
+    // var temp_interests = profileUser.interests;
+    // for(var i=0;i<temp_interests.length;i++){
+    //   if(!temp_interests[i].hidden) newprof.interests.push(temp_interests[i]);
+    // }
+
+    // var temp_references = profileUser.references;
+    // for(var i=0;i<temp_references.length;i++){
+    //   if(!temp_references[i].hidden) newprof.references.push(temp_references[i]);
+    // }
+
     fs.writeFile('file.json', JSON.stringify({profile : profileUser}), (err) => {
       // throws an error, you could also catch it here
       if (err) return res.status(500).send('Server Error');
     });
+    
     return res.json(profileUser);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send('Server Error');
+  }
+});
+
+router.get('/mefull', auth, async (req, res) => {
+  try {
+    const profileUser = await Profile.findOne({ user: req.user.id }).populate('user',
+      ['name', 'email']);
+
+    if (!profileUser) {
+      return res.status(400).json({ msg: "User hasn't set up his/her profile yet" });
+    } 
+    return res.json(profileUser);
+    
   } catch (err) {
     console.log(err);
     return res.status(500).send('Server Error');
