@@ -1,0 +1,9 @@
+version : '3'
+services :
+  app:
+    container_name : porty-backend
+    restart : always
+    build : .
+    ports : 
+      - '3030:5000'
+    
