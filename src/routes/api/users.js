@@ -19,10 +19,8 @@ router.get('/', (req, res) => {
 // create a new user
 router.post('/', [
   check('name', 'Name is Required').not().isEmpty(),
-  check('email', 'Not Valid Email').isEmail(), // here we need to add valid IIT email address,so I need to add condtions for that also
-  check('password', 'Password is Required').not().isEmpty(),
-
-  // similarly we can add more if we want
+  //check('email', 'Not Valid Email').isEmail(), // here we need to add valid IIT email address,so I need to add condtions for that also
+  check('password', 'Password is Required').not().isEmpty()
 ], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -31,11 +29,22 @@ router.post('/', [
 
   try {
     // see if user exists
-    const { email } = req.body;
+    const { email, entryno } = req.body;
+
+    if(!email.endsWith("@iitd.ac.in")){
+      return res.status(400).json({ errors: [{ msg: 'Not a valid IITD email address,it should end with a @iitd.ac.in' }] });
+    }
+
     let user = await User.findOne({ email });
 
     if (user) {
-      return res.status(400).json({ errors: [{ msg: 'user already exists' }] });
+      return res.status(400).json({ errors: [{ msg: 'User already exists with same email/entry number' }] });
+    }
+
+    user = await User.findOne({ entryno })
+
+    if (user) {
+      return res.status(400).json({ errors: [{ msg: 'User already exists with same email/entry number' }] });
     }
 
     user = new User(req.body);
@@ -92,10 +101,8 @@ router.post('/', [
 
           // Preview only available when sending through an Ethereal account
           console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-
-
-          
           return res.json({ msg: 'We have sent email containing otp' });
+          
         } catch (err_) {
           console.log(err_);
         }
@@ -136,11 +143,9 @@ router.get('/verify/:jwt', async (req, res) => {
 
     res.status(200).json({ msg: 'Your account has been verified..Please login to access your account' });
   } catch (err) {
-    console.error(err);
+    console.log(err);
     return res.status(500).json({ msg: 'Token not valid' });
   }
-
-  return null;
 });
 
 export default router;
