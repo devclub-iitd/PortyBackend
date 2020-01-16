@@ -7,7 +7,6 @@ import { secretkey } from '../../config/keys';
 import User from '../../models/users';
 import 'babel-polyfill';
 
-
 const router = express.Router();
 
 // find all users
@@ -29,11 +28,11 @@ router.post('/', [
 
   try {
     // see if user exists
-    const { email, entryno } = req.body;
+    const { email , entryno } = req.body;
 
-    if(!email.endsWith("@iitd.ac.in")){
-      return res.status(400).json({ errors: [{ msg: 'Not a valid IITD email address,it should end with a @iitd.ac.in' }] });
-    }
+    // if(!email.endsWith("@iitd.ac.in")){
+    //   return res.status(400).json({ errors: [{ msg: 'Not a valid IITD email address,it should end with a @iitd.ac.in' }] });
+    // }
 
     let user = await User.findOne({ email });
 
@@ -78,33 +77,41 @@ router.post('/', [
 
         // here send the mail
         try {
-          const transporter = nodemailer.createTransport({
-            host: 'smtp.ethereal.email',
-            port: 587,
+          var transporter = nodemailer.createTransport({
+            service: 'gmail',
             auth: {
-              user: 'pearl.osinski81@ethereal.email',
-              pass: 'HnhJH9D6QVSCcQAuEp',
-            },
+              user: 'portfoliocreatoriitd@gmail.com',
+              pass: 'admin@12345'
+            }
           });
 
           // send mail with defined transport object
           const info = await transporter.sendMail({
-            from: '"jatinprakash 👻" <jatin000005@gmail.com>', // sender address
+            from: '"Portfolio Creator👻" <portfoliocreatoriitd@gmail.com>', // sender address
             to: user.email, // list of receivers
-            subject: 'Hello ✔', // Subject line
-            text: `http://localhost:5000/api/user/verify/${token}`, // plain text body
-            html: `<b>http://localhost:5000/api/user/verify/${token}</b>`, // html body
+            subject: 'Email Verification', // Subject line
+            // text: `http://localhost:5000/api/user/verify/${token}`, // plain text body
+            html: `<h3>Click on the link below to verify your account.</h3>
+            <p>
+                <a href="http://localhost:5000/api/user/verify/${token}">Click Here</a>
+            </p>`, // html body
           });
 
           console.log('Message sent: %s', info.messageId);
 
 
           // Preview only available when sending through an Ethereal account
-          console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+          //console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
           return res.json({ msg: 'We have sent email containing otp' });
           
         } catch (err_) {
           console.log(err_);
+          try {
+            await user.delete();
+          } catch (err__) {
+              console.log(err__)
+              res.json({msg : 'Fatal Error Occured. Please Contact Support.'})
+          }
         }
 
         return null;
@@ -140,7 +147,7 @@ router.get('/verify/:jwt', async (req, res) => {
 
     // console.log(founduser);
     await founduser.save();
-
+    res.redirect('http://localhost:3000/validate');
     res.status(200).json({ msg: 'Your account has been verified..Please login to access your account' });
   } catch (err) {
     console.log(err);
