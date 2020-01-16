@@ -9,19 +9,15 @@ const router = express.Router();
 // get profile by id for public access by accessing api/profile/user/:user_id
 router.get('/user/:en', async (req, res) => {
   try {
-    //await User.findByIdAndDelete("5ddbd5ee09a9bd49c3c7a83c");
-    //console.log(req.params.en)
+    
     const user_found = await User.findOne({entryno : `${req.params.en}`})
-    //console.log("hello")
-    //console.log(user_found)
     if(!user_found) return res.status(400).json({ msg: 'User doesnt exists' });
     
     const profile = await Profile.findOne({ user : user_found._id }).populate(
       'user',
       ['name', 'email','entryno'],
     );
-    //console.log(profile)
-    // console.log(profile);
+    
     if (!profile) return res.status(400).json({ msg: 'Profile not found for this user' });
 
     return res.json(profile);
