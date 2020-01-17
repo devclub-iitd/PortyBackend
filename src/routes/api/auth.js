@@ -14,7 +14,7 @@ router.get('/', auth, async (req, res) => {
     res.json(user);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Server error');
+    res.status(500).json({ errors: [{ msg: 'Server Error' }] });
   }
 });
 
@@ -36,17 +36,17 @@ router.post('/', [
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(400).json({ errors: [{ msg: 'invalid login details' }] });
+      return res.status(400).json({ errors: [{ msg: 'Not a registered email address' }] });
     }
 
     const isMatch = await bcrypt.compare(req.body.password, user.password);
 
     if (!isMatch) {
-      return res.status(400).json({ errors: [{ msg: 'invalid login details' }] });
+      return res.status(400).json({ errors: [{ msg: 'Password seems to be incorrect' }] });
     }
 
     if (!user.isverified) {
-      return res.status(400).json({ errors: [{ msg: 'Your account has not been verified' }] });
+      return res.status(400).json({ errors: [{ msg: 'Your account has not been verified, Please check your email for verification' }] });
     }
 
     // return webtoken
@@ -66,7 +66,7 @@ router.post('/', [
       });
   } catch (err) {
     console.log(err);
-    return res.status(500).send('Server error');
+    return res.status(500).json({ errors: [{ msg: 'Server Error' }] });
   }
 
   return null;
