@@ -14,6 +14,8 @@ router.get("/", (req, res) => {
   User.find().then(users => res.json(users));
 });
 
+
+//this is to regenerate otp
 router.post(
   "/otp",
   [
@@ -21,9 +23,9 @@ router.post(
       .not()
       .isEmpty(),
     //check('email', 'Not Valid Email').isEmail(), // here we need to add valid IIT email address,so I need to add condtions for that also
-    check("password", "Password is Required")
-      .not()
-      .isEmpty()
+    // check("password", "Password is Required")
+    //   .not()
+    //   .isEmpty()  //pass s not required
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -33,7 +35,7 @@ router.post(
 
     try {
       // see if user exists
-      const { email, password } = req.body;
+      const { email } = req.body;
 
       let user = await User.findOne({ email });
 
@@ -43,14 +45,7 @@ router.post(
           .json({ errors: [{ msg: "No user exists with the given email" }] });
       }
 
-      const isMatch = await bcrypt.compare(password, user.password);
-
-      if (!isMatch) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: "Password seems to be incorrect" }] });
-      }
-
+      
       // return webtoken
       const payload = {
         user: {
@@ -99,6 +94,7 @@ router.post(
 
         return null;
       });
+      
     } catch (err) {
       console.log(err);
       res.status(500).json({ errors: [{ msg: "Servor Error" }] });
@@ -271,9 +267,6 @@ router.post(
       .not()
       .isEmpty(),
     //check('email', 'Not Valid Email').isEmail(), // here we need to add valid IIT email address,so I need to add condtions for that also
-    check("password", "Password is Required")
-      .not()
-      .isEmpty()
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -349,6 +342,7 @@ router.post(
 );
 
 router.get("/verifypass/:jwt", async (req, res) => {
+  
   const token = req.params.jwt;
 
   if (!token) {
@@ -359,12 +353,15 @@ router.get("/verifypass/:jwt", async (req, res) => {
 
   try {
     const decoded = verify(token, secretkey);
-    // this will give us the user:id in req.user.id
-    const founduser = await User.findById(decoded.user.id).select("-password");
+    const { email, entryno } = req.body;
+    let user = await User.findOne({ email });
 
-    founduser.isverified = true;
+    if (!user) {
+      return res
+        .status(400)
+        .json({ errors: [{ msg: "No user exists with the given email" }] });
+    }
 
-    console.log(founduser);
     await founduser.save();
     res.redirect("http://localhost:3000/validate");
     res
