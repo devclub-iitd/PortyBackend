@@ -7,20 +7,22 @@ const profileSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'user',
   },
-  entryno: { type: String },
-  age: { type: String },
-  dob: { type: String },
-  phone: { type: String },
-  aboutme : { type : String},
+  about : { 
+    label : {type : String},
+    summary : {type : String},
+    number : {type : String},
+    imgUrl : {type : String}
+  },
   education: [
     {
       institution: { type: String },
-      discipline: { type: String },
-      type: { type: String },
-      startDate: { type: String },
-      endDate: { type: String },
-      cgpa: { type: String },
-      maxcgpa: { type: String }
+      qualification: { type: String },
+      area: { type: String },
+      startdate: { type: String },
+      enddate: { type: String },
+      gpa: { type: String },
+      details: { type: String },
+      hidden: { type: Boolean}
     },
   ],
   work : [
@@ -28,26 +30,29 @@ const profileSchema = new Schema({
       company: { type: String},
       position: { type: String },
       website: { type: String },
-      startDate: { type: String },
-      startDate: { type: String },
+      startdate: { type: String },
+      enddate: { type: String },
       summary: { type: String },
+      hidden: { type: Boolean}
     }
   ],
   location : {
-    address: { type: String },
-    postalCode: { type: String },
+    addressline1: { type: String },
+    addressline2: { type: String },
     city: { type: String },
-    countryCode: { type: String },
-    region: { type: String },
+    pincode: { type: String },
+    country: { type: String },
+    
   },
   volunteer : [
     {
-      organization: { type: String },
-      postion: { type: String },
+      organisation: { type: String },
+      position: { type: String },
       website: { type: String },
-      startDate: { type: String },
-      endDate: { type: String },
+      startdate: { type: String },
+      enddate: { type: String },
       summary: { type: String },
+      hidden: { type: Boolean}
     }
   ],
   awards : [
@@ -55,7 +60,8 @@ const profileSchema = new Schema({
       title: { type: String },
       date: { type: String },
       awarder: { type: String },
-      summary: { type: String },
+      details: { type: String },
+      hidden: { type: Boolean}
     }
   ],
   publications : [
@@ -65,6 +71,7 @@ const profileSchema = new Schema({
       releaseDate: { type: String },
       website: { type: String },
       summary: { type: String },
+      hidden: { type: Boolean}
     }
   ],
   skills : [
@@ -72,24 +79,28 @@ const profileSchema = new Schema({
       name: { type: String },
       level: { type: String },
       keywords: { type: String },
+      hidden: { type: Boolean}
     }
   ],
   languages : [
     {
       language: { type: String },
       fluency: { type: String },
+      hidden: { type: Boolean}
     }
   ],
   interests : [
     {
       name: { type: String },
       keywords: { type: String },
+      hidden: { type: Boolean}
     }
   ],
   references : [
     {
       name: { type: String },
       reference: { type: String },
+      hidden: { type: Boolean}
     }
   ],
 });
