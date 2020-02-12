@@ -1,7 +1,15 @@
-FROM node:13
+# FROM node:13
+# WORKDIR /app
+# COPY package.json /app
+# RUN npm install
+# COPY . /app
+# EXPOSE 5000
+# CMD ["npm","start"]
+
+FROM node:12.2.0-alpine as build
 WORKDIR /app
-COPY package.json /app
-RUN npm install
+ENV PATH /app/node_modules/.bin:$PATH
+COPY package.json /app/package.json
+RUN npm install --silent
 COPY . /app
-EXPOSE 5000
-CMD ["npm","start"]
+RUN npm start
