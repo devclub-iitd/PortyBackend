@@ -28,7 +28,8 @@ app.use('/api/user', user);
 app.use('/api/auth', auth);
 app.use('/api/profile', profile);
 
-const port = process.env.PORT;
+// const port = process.env.PORT;
+const port = 5000;
 
 app.listen(port, () => {
   console.log(`Server started at http://localhost:${port}`);

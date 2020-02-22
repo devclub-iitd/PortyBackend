@@ -1,7 +1,7 @@
 import express from "express";
 import { check, validationResult } from "express-validator/check";
 import bcrypt from "bcryptjs";
-import jwt, { verify } from "jsonwebtoken";
+import jwt, { verify, decode } from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import { secretkey } from "../../config/keys";
 import User from "../../models/users";
@@ -266,7 +266,11 @@ router.post(
     check("email", "Email is Required")
       .not()
       .isEmpty(),
+    check("password", "Password is required").not().isEmpty(),
     //check('email', 'Not Valid Email').isEmail(), // here we need to add valid IIT email address,so I need to add condtions for that also
+    // check("password", "Password is Required")
+    //   .not()
+    //   .isEmpty()  //pass s not required
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -276,7 +280,7 @@ router.post(
 
     try {
       // see if user exists
-      const { email } = req.body;
+      const { email , password } = req.body;
 
       let user = await User.findOne({ email });
 
@@ -286,10 +290,12 @@ router.post(
           .json({ errors: [{ msg: "No user exists with the given email" }] });
       }
 
+      
       // return webtoken
       const payload = {
         user: {
-          id: user.id // with this we can access req.user.id
+          id: user.id, // with this we can access decoded.user.id
+          password : password
         }
       };
 
@@ -314,11 +320,11 @@ router.post(
           const info = await transporter.sendMail({
             from: '"Portfolio Creator👻" <portfoliocreatoriitd@gmail.com>', // sender address
             to: user.email, // list of receivers
-            subject: "Password Change", // Subject line
+            subject: "Email Verification", // Subject line
             // text: `http://localhost:5000/api/user/verify/${token}`, // plain text body
-            html: `<h3>Click on the link below to change password for your account.</h3>
+            html: `<h3>Click on the link below to change your password.</h3>
               <p>
-                  <a href="http://localhost:5000/api/user/verifypass/${token}">Click Here</a>
+                  <a href="http://localhost:5000/api/user/verify/forgot/${token}">Click Here</a>
               </p>` // html body
           });
 
@@ -326,7 +332,7 @@ router.post(
 
           // Preview only available when sending through an Ethereal account
           //console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-          return res.json({ msg: "We have sent email details to change the password" });
+          return res.json({ msg: "We have sent email containing otp" });
         } catch (err_) {
           console.log(err_);
           res.status(500).json({ errors: [{ msg: "Servor Error" }] });
@@ -334,6 +340,7 @@ router.post(
 
         return null;
       });
+      
     } catch (err) {
       console.log(err);
       res.status(500).json({ errors: [{ msg: "Servor Error" }] });
@@ -341,8 +348,7 @@ router.post(
   }
 );
 
-router.get("/verifypass/:jwt", async (req, res) => {
-  
+router.get("/verify/forgot/:jwt", async (req, res) => {
   const token = req.params.jwt;
 
   if (!token) {
@@ -353,22 +359,24 @@ router.get("/verifypass/:jwt", async (req, res) => {
 
   try {
     const decoded = verify(token, secretkey);
-    const { email, entryno } = req.body;
-    let user = await User.findOne({ email });
+    // this will give us the user:id in req.user.id
+    const founduser = await User.findById(decoded.user.id);
 
-    if (!user) {
-      return res
-        .status(400)
-        .json({ errors: [{ msg: "No user exists with the given email" }] });
-    }
+    founduser.password = decoded.user.password;
+    // encrypt the password using bcrypt
+    const salt = await bcrypt.genSalt(10); // which to use 10 or more than that
 
+    founduser.password = await bcrypt.hash(founduser.password, salt);
+
+    console.log(founduser);
+    
     await founduser.save();
-    res.redirect("http://localhost:3000/validate");
+    // res.redirect("http://localhost:3000/validatepass");
     res
       .status(200)
       .json({
         msg:
-          "Your account has been verified..Please login to access your account"
+          "Your password has been changed..."
       });
   } catch (err) {
     console.log(err);
