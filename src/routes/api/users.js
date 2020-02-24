@@ -371,7 +371,7 @@ router.get("/verify/forgot/:jwt", async (req, res) => {
     console.log(founduser);
     
     await founduser.save();
-    // res.redirect("http://localhost:3000/validatepass");
+    res.redirect("http://localhost:3000/resetSucc");
     res
       .status(200)
       .json({
