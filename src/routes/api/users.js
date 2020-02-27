@@ -65,8 +65,8 @@ router.post(
           var transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
-              user: "portfoliocreatoriitd@gmail.com",
-              pass: "admin@12345"
+              user: process.env['USER_NAME'],
+              pass: process.env['PASS']
             }
           });
 
@@ -178,8 +178,8 @@ router.post(
           var transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
-              user: "portfoliocreatoriitd@gmail.com",
-              pass: "admin@12345"
+              user: process.env['USER_NAME'],
+              pass: process.env['PASS']
             }
           });
 
@@ -311,8 +311,8 @@ router.post(
           var transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
-              user: "portfoliocreatoriitd@gmail.com",
-              pass: "admin@12345"
+              user: process.env['USER_NAME'],
+              pass: process.env['PASS']
             }
           });
 
