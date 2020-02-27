@@ -1,25 +1,34 @@
 version: '3.4'
-
 services:
   porty_backend:
-    build: .
     image: "${REGISTRY_NAME}devclubiitd/porty_backend:0.1"
-    ports:
-      - '${PORT}:${PORT}'
     healthcheck:
       test: ["CMD", "curl", "http://localhost"]
       interval: 1m30s
       timeout: 10s
       retries: 3
       start_period: 40s
-    restart: "unless-stopped" 
+    restart: "unless-stopped"
+    build: .
+    env_file:
+      - ./.env
+    ports:
+      - '${PORT}:${PORT}'
+    environment:
+      - VIRTUAL_HOST
+    links:
+      - mongo
     networks:
       - "internal"
       - "reverseproxy"
-    env_file:
-      - ./.env
-    environment:
-      - VIRTUAL_HOST
+  mongo:
+    container_name: mongo
+    image: mongo
+    ports:
+      - '27017:27017'
+    networks:
+      - "internal"
+      - "reverseproxy"
 
 networks:
   reverseproxy:
