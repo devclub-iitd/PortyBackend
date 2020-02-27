@@ -10,7 +10,7 @@ const app = express();
 // Body Parser Middleware
 app.use(bodyParser.json());
 
-mongoose.connect(process.env['DATABASE'], { useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false })
+mongoose.connect('mongodb://mongo:27017/PortyBackend', { useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false })
   .then(() => {
     console.log('Connected to the database...');
   })
