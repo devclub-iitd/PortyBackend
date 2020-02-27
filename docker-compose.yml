@@ -1,5 +1,12 @@
 version: '3.4'
 services:
+  database:
+    image: "${REGISTRY_NAME}mongo:latest"
+    volumes:
+      - portfoliodb:/data/db
+    networks:
+      - "internal"
+    restart: "unless-stopped"
   porty_backend:
     image: "${REGISTRY_NAME}devclubiitd/porty_backend:0.1"
     healthcheck:
@@ -16,19 +23,14 @@ services:
       - '${PORT}:${PORT}'
     environment:
       - VIRTUAL_HOST
-    links:
-      - mongo
     networks:
       - "internal"
       - "reverseproxy"
-  mongo:
-    container_name: mongo
-    image: mongo
-    ports:
-      - '27017:27017'
-    networks:
-      - "internal"
-      - "reverseproxy"
+    depends_on:
+      - database
+
+volumes:
+  portfoliodb:
 
 networks:
   reverseproxy:
