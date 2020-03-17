@@ -65,3 +65,9 @@ typings/
 
 #dump data
 *.json
+
+.DS_Store
+.vscode/
+
+file.json
+file.txt

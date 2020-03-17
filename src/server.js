@@ -7,10 +7,12 @@ import profile from './routes/api/profile';
 
 const app = express();
 
+console.log(process.env)
+
 // Body Parser Middleware
 app.use(bodyParser.json());
 
-mongoose.connect('mongodb://mongo:27017/PortyBackend', { useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false })
+mongoose.connect('mongodb://database:27017/porty_backend', { useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false })
   .then(() => {
     console.log('Connected to the database...');
   })

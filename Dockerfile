@@ -13,6 +13,6 @@ RUN npm install
 
 COPY . .
 
-RUN ["chmod", "+x", "/code/entry-point.sh"]
+RUN ["chmod", "+x", "/code/entry_point.sh"]
 
-ENTRYPOINT ["/code/entry-point.sh"] 
+ENTRYPOINT ["/code/entry_point.sh"] 
