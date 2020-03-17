@@ -1,7 +1,18 @@
-FROM node:12.2.0-alpine as build
-WORKDIR /app
-ENV PATH /app/node_modules/.bin:$PATH
-COPY package.json /app/package.json
-RUN npm install --silent
-COPY . /app
-CMD ["node","start.js"]
+FROM node:latest
+
+RUN mkdir /code
+WORKDIR /code
+
+RUN apt-get update
+RUN npm install -g nodemon
+RUN apt-get install netcat -y
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+RUN ["chmod", "+x", "/code/entry-point.sh"]
+
+ENTRYPOINT ["/code/entry-point.sh"] 
