@@ -6,6 +6,8 @@ import nodemailer from "nodemailer";
 import { secretkey } from "../../config/keys";
 import User from "../../models/users";
 import "babel-polyfill";
+import { google } from "googleapis";
+const OAuth2 = google.auth.OAuth2;
 
 const router = express.Router();
 
@@ -62,12 +64,29 @@ router.post(
 
         // here send the mail
         try {
-          var transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-              user: process.env['USER_NAME'],
-              pass: process.env['PASS']
-            }
+
+          const oauth2Client = new OAuth2(
+            process.env["CLIENT_ID"], // ClientID
+            process.env["CLIENT_SECRET"], // Client Secret
+            "https://developers.google.com/oauthplayground" // Redirect URL
+          );
+        
+          oauth2Client.setCredentials({
+              refresh_token: process.env["REFRESH_TOKEN"]
+          });
+          
+          const accessToken = oauth2Client.getAccessToken()
+          
+          const transporter = nodemailer.createTransport({
+              service: "gmail",
+              auth: {
+                  type: "OAuth2",
+                  user: "portfoliocreatoriitd@gmail.com", 
+                  clientId: process.env["CLIENT_ID"],
+                  clientSecret: process.env["CLIENT_SECRET"],
+                  refreshToken: process.env["REFRESH_TOKEN"],
+                  accessToken: accessToken
+              }
           });
 
           // send mail with defined transport object
@@ -175,12 +194,29 @@ router.post(
 
         // here send the mail
         try {
-          var transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-              user: process.env['USER_NAME'],
-              pass: process.env['PASS']
-            }
+          
+          const oauth2Client = new OAuth2(
+            process.env["CLIENT_ID"], // ClientID
+            process.env["CLIENT_SECRET"], // Client Secret
+            "https://developers.google.com/oauthplayground" // Redirect URL
+          );
+        
+          oauth2Client.setCredentials({
+              refresh_token: process.env["REFRESH_TOKEN"]
+          });
+          
+          const accessToken = oauth2Client.getAccessToken()
+          
+          const transporter = nodemailer.createTransport({
+              service: "gmail",
+              auth: {
+                  type: "OAuth2",
+                  user: "portfoliocreatoriitd@gmail.com", 
+                  clientId: process.env["CLIENT_ID"],
+                  clientSecret: process.env["CLIENT_SECRET"],
+                  refreshToken: process.env["REFRESH_TOKEN"],
+                  accessToken: accessToken
+              }
           });
 
           // send mail with defined transport object
@@ -244,7 +280,6 @@ router.get("/verify/:jwt", async (req, res) => {
 
     founduser.isverified = true;
 
-    console.log(founduser);
     await founduser.save();
     res.redirect("http://localhost:3000/validate");
     res
@@ -308,12 +343,29 @@ router.post(
 
         // here send the mail
         try {
-          var transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-              user: process.env['USER_NAME'],
-              pass: process.env['PASS']
-            }
+          
+          const oauth2Client = new OAuth2(
+            process.env["CLIENT_ID"], // ClientID
+            process.env["CLIENT_SECRET"], // Client Secret
+            "https://developers.google.com/oauthplayground" // Redirect URL
+          );
+        
+          oauth2Client.setCredentials({
+              refresh_token: process.env["REFRESH_TOKEN"]
+          });
+          
+          const accessToken = oauth2Client.getAccessToken()
+          
+          const transporter = nodemailer.createTransport({
+              service: "gmail",
+              auth: {
+                  type: "OAuth2",
+                  user: "portfoliocreatoriitd@gmail.com", 
+                  clientId: process.env["CLIENT_ID"],
+                  clientSecret: process.env["CLIENT_SECRET"],
+                  refreshToken: process.env["REFRESH_TOKEN"],
+                  accessToken: accessToken
+              }
           });
 
           // send mail with defined transport object
@@ -367,8 +419,6 @@ router.get("/verify/forgot/:jwt", async (req, res) => {
     const salt = await bcrypt.genSalt(10); // which to use 10 or more than that
 
     founduser.password = await bcrypt.hash(founduser.password, salt);
-
-    console.log(founduser);
     
     await founduser.save();
     res.redirect("http://localhost:3000/resetSucc");
