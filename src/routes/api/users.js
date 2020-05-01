@@ -64,15 +64,15 @@ router.post(
 
         // here send the mail
         try {
-          
+
           const oauth2Client = new OAuth2(
-            "373006575915-dde96dkiv87427puj9dh46hlldr2o004.apps.googleusercontent.com", // ClientID
-            "3dO9vkz4nxMmL73pAURwyh3-", // Client Secret
+            process.env["CLIENT_ID"], // ClientID
+            process.env["CLIENT_SECRET"], // Client Secret
             "https://developers.google.com/oauthplayground" // Redirect URL
           );
         
           oauth2Client.setCredentials({
-              refresh_token: "1//04HGAo7UWqtCmCgYIARAAGAQSNwF-L9IrP3U5Q-3xdDEj1CehIfS1MYyHMu0QLkY-woTcKIshnkRL4OylXxYAqgdij33elMDP6Mo"
+              refresh_token: process.env["REFRESH_TOKEN"]
           });
           
           const accessToken = oauth2Client.getAccessToken()
@@ -82,9 +82,9 @@ router.post(
               auth: {
                   type: "OAuth2",
                   user: "portfoliocreatoriitd@gmail.com", 
-                  clientId: "373006575915-dde96dkiv87427puj9dh46hlldr2o004.apps.googleusercontent.com",
-                  clientSecret: "3dO9vkz4nxMmL73pAURwyh3-",
-                  refreshToken: "1//04HGAo7UWqtCmCgYIARAAGAQSNwF-L9IrP3U5Q-3xdDEj1CehIfS1MYyHMu0QLkY-woTcKIshnkRL4OylXxYAqgdij33elMDP6Mo",
+                  clientId: process.env["CLIENT_ID"],
+                  clientSecret: process.env["CLIENT_SECRET"],
+                  refreshToken: process.env["REFRESH_TOKEN"],
                   accessToken: accessToken
               }
           });
@@ -196,13 +196,13 @@ router.post(
         try {
           
           const oauth2Client = new OAuth2(
-            "373006575915-dde96dkiv87427puj9dh46hlldr2o004.apps.googleusercontent.com", // ClientID
-            "3dO9vkz4nxMmL73pAURwyh3-", // Client Secret
+            process.env["CLIENT_ID"], // ClientID
+            process.env["CLIENT_SECRET"], // Client Secret
             "https://developers.google.com/oauthplayground" // Redirect URL
           );
         
           oauth2Client.setCredentials({
-              refresh_token: "1//04HGAo7UWqtCmCgYIARAAGAQSNwF-L9IrP3U5Q-3xdDEj1CehIfS1MYyHMu0QLkY-woTcKIshnkRL4OylXxYAqgdij33elMDP6Mo"
+              refresh_token: process.env["REFRESH_TOKEN"]
           });
           
           const accessToken = oauth2Client.getAccessToken()
@@ -212,9 +212,9 @@ router.post(
               auth: {
                   type: "OAuth2",
                   user: "portfoliocreatoriitd@gmail.com", 
-                  clientId: "373006575915-dde96dkiv87427puj9dh46hlldr2o004.apps.googleusercontent.com",
-                  clientSecret: "3dO9vkz4nxMmL73pAURwyh3-",
-                  refreshToken: "1//04HGAo7UWqtCmCgYIARAAGAQSNwF-L9IrP3U5Q-3xdDEj1CehIfS1MYyHMu0QLkY-woTcKIshnkRL4OylXxYAqgdij33elMDP6Mo",
+                  clientId: process.env["CLIENT_ID"],
+                  clientSecret: process.env["CLIENT_SECRET"],
+                  refreshToken: process.env["REFRESH_TOKEN"],
                   accessToken: accessToken
               }
           });
@@ -280,7 +280,6 @@ router.get("/verify/:jwt", async (req, res) => {
 
     founduser.isverified = true;
 
-    console.log(founduser);
     await founduser.save();
     res.redirect("http://localhost:3000/validate");
     res
@@ -346,13 +345,13 @@ router.post(
         try {
           
           const oauth2Client = new OAuth2(
-            "373006575915-dde96dkiv87427puj9dh46hlldr2o004.apps.googleusercontent.com", // ClientID
-            "3dO9vkz4nxMmL73pAURwyh3-", // Client Secret
+            process.env["CLIENT_ID"], // ClientID
+            process.env["CLIENT_SECRET"], // Client Secret
             "https://developers.google.com/oauthplayground" // Redirect URL
           );
         
           oauth2Client.setCredentials({
-              refresh_token: "1//04HGAo7UWqtCmCgYIARAAGAQSNwF-L9IrP3U5Q-3xdDEj1CehIfS1MYyHMu0QLkY-woTcKIshnkRL4OylXxYAqgdij33elMDP6Mo"
+              refresh_token: process.env["REFRESH_TOKEN"]
           });
           
           const accessToken = oauth2Client.getAccessToken()
@@ -362,9 +361,9 @@ router.post(
               auth: {
                   type: "OAuth2",
                   user: "portfoliocreatoriitd@gmail.com", 
-                  clientId: "373006575915-dde96dkiv87427puj9dh46hlldr2o004.apps.googleusercontent.com",
-                  clientSecret: "3dO9vkz4nxMmL73pAURwyh3-",
-                  refreshToken: "1//04HGAo7UWqtCmCgYIARAAGAQSNwF-L9IrP3U5Q-3xdDEj1CehIfS1MYyHMu0QLkY-woTcKIshnkRL4OylXxYAqgdij33elMDP6Mo",
+                  clientId: process.env["CLIENT_ID"],
+                  clientSecret: process.env["CLIENT_SECRET"],
+                  refreshToken: process.env["REFRESH_TOKEN"],
                   accessToken: accessToken
               }
           });
@@ -420,8 +419,6 @@ router.get("/verify/forgot/:jwt", async (req, res) => {
     const salt = await bcrypt.genSalt(10); // which to use 10 or more than that
 
     founduser.password = await bcrypt.hash(founduser.password, salt);
-
-    console.log(founduser);
     
     await founduser.save();
     res.redirect("http://localhost:3000/resetSucc");
