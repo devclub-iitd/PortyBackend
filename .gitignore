@@ -71,3 +71,5 @@ typings/
 
 file.json
 file.txt
+
+.DS_Store
