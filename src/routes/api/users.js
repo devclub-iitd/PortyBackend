@@ -6,6 +6,8 @@ import nodemailer from "nodemailer";
 import { secretkey } from "../../config/keys";
 import User from "../../models/users";
 import "babel-polyfill";
+import { google } from "googleapis";
+const OAuth2 = google.auth.OAuth2;
 
 const router = express.Router();
 
@@ -62,12 +64,29 @@ router.post(
 
         // here send the mail
         try {
-          var transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-              user: process.env['USER_NAME'],
-              pass: process.env['PASS']
-            }
+          
+          const oauth2Client = new OAuth2(
+            "373006575915-dde96dkiv87427puj9dh46hlldr2o004.apps.googleusercontent.com", // ClientID
+            "3dO9vkz4nxMmL73pAURwyh3-", // Client Secret
+            "https://developers.google.com/oauthplayground" // Redirect URL
+          );
+        
+          oauth2Client.setCredentials({
+              refresh_token: "1//04HGAo7UWqtCmCgYIARAAGAQSNwF-L9IrP3U5Q-3xdDEj1CehIfS1MYyHMu0QLkY-woTcKIshnkRL4OylXxYAqgdij33elMDP6Mo"
+          });
+          
+          const accessToken = oauth2Client.getAccessToken()
+          
+          const transporter = nodemailer.createTransport({
+              service: "gmail",
+              auth: {
+                  type: "OAuth2",
+                  user: "portfoliocreatoriitd@gmail.com", 
+                  clientId: "373006575915-dde96dkiv87427puj9dh46hlldr2o004.apps.googleusercontent.com",
+                  clientSecret: "3dO9vkz4nxMmL73pAURwyh3-",
+                  refreshToken: "1//04HGAo7UWqtCmCgYIARAAGAQSNwF-L9IrP3U5Q-3xdDEj1CehIfS1MYyHMu0QLkY-woTcKIshnkRL4OylXxYAqgdij33elMDP6Mo",
+                  accessToken: accessToken
+              }
           });
 
           // send mail with defined transport object
@@ -175,12 +194,29 @@ router.post(
 
         // here send the mail
         try {
-          var transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-              user: process.env['USER_NAME'],
-              pass: process.env['PASS']
-            }
+          
+          const oauth2Client = new OAuth2(
+            "373006575915-dde96dkiv87427puj9dh46hlldr2o004.apps.googleusercontent.com", // ClientID
+            "3dO9vkz4nxMmL73pAURwyh3-", // Client Secret
+            "https://developers.google.com/oauthplayground" // Redirect URL
+          );
+        
+          oauth2Client.setCredentials({
+              refresh_token: "1//04HGAo7UWqtCmCgYIARAAGAQSNwF-L9IrP3U5Q-3xdDEj1CehIfS1MYyHMu0QLkY-woTcKIshnkRL4OylXxYAqgdij33elMDP6Mo"
+          });
+          
+          const accessToken = oauth2Client.getAccessToken()
+          
+          const transporter = nodemailer.createTransport({
+              service: "gmail",
+              auth: {
+                  type: "OAuth2",
+                  user: "portfoliocreatoriitd@gmail.com", 
+                  clientId: "373006575915-dde96dkiv87427puj9dh46hlldr2o004.apps.googleusercontent.com",
+                  clientSecret: "3dO9vkz4nxMmL73pAURwyh3-",
+                  refreshToken: "1//04HGAo7UWqtCmCgYIARAAGAQSNwF-L9IrP3U5Q-3xdDEj1CehIfS1MYyHMu0QLkY-woTcKIshnkRL4OylXxYAqgdij33elMDP6Mo",
+                  accessToken: accessToken
+              }
           });
 
           // send mail with defined transport object
@@ -308,12 +344,29 @@ router.post(
 
         // here send the mail
         try {
-          var transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-              user: process.env['USER_NAME'],
-              pass: process.env['PASS']
-            }
+          
+          const oauth2Client = new OAuth2(
+            "373006575915-dde96dkiv87427puj9dh46hlldr2o004.apps.googleusercontent.com", // ClientID
+            "3dO9vkz4nxMmL73pAURwyh3-", // Client Secret
+            "https://developers.google.com/oauthplayground" // Redirect URL
+          );
+        
+          oauth2Client.setCredentials({
+              refresh_token: "1//04HGAo7UWqtCmCgYIARAAGAQSNwF-L9IrP3U5Q-3xdDEj1CehIfS1MYyHMu0QLkY-woTcKIshnkRL4OylXxYAqgdij33elMDP6Mo"
+          });
+          
+          const accessToken = oauth2Client.getAccessToken()
+          
+          const transporter = nodemailer.createTransport({
+              service: "gmail",
+              auth: {
+                  type: "OAuth2",
+                  user: "portfoliocreatoriitd@gmail.com", 
+                  clientId: "373006575915-dde96dkiv87427puj9dh46hlldr2o004.apps.googleusercontent.com",
+                  clientSecret: "3dO9vkz4nxMmL73pAURwyh3-",
+                  refreshToken: "1//04HGAo7UWqtCmCgYIARAAGAQSNwF-L9IrP3U5Q-3xdDEj1CehIfS1MYyHMu0QLkY-woTcKIshnkRL4OylXxYAqgdij33elMDP6Mo",
+                  accessToken: accessToken
+              }
           });
 
           // send mail with defined transport object
