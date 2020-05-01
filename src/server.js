@@ -14,7 +14,6 @@ app.use(bodyParser.json());
 
 mongoose.connect('mongodb://database:27017/porty_backend', { useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false })
   .then(() => {
-    console.log(process.env["USER_NAME"] + "tls true now")
     console.log('Connected to the database...');
   })
   .catch((err) => {
