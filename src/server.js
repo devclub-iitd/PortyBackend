@@ -13,6 +13,7 @@ app.use(bodyParser.json());
 // for debug purposes:
 // local : mongodb://127.0.0.1/my_database
 // docker : mongodb://database:27017/porty_backend
+// online : mongodb+srv://jatin:<password>@cluster0-fyl7v.mongodb.net/test?retryWrites=true&w=majority
 
 mongoose.connect('mongodb://database:27017/porty_backend', { useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false })
   .then(() => {
