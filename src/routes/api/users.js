@@ -78,7 +78,10 @@ router.post(
           const accessToken = oauth2Client.getAccessToken()
           
           const transporter = nodemailer.createTransport({
-              service: "gmail",
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            service: 'Gmail',
               auth: {
                   type: "OAuth2",
                   user: "portfoliocreatoriitd@gmail.com", 
@@ -208,7 +211,10 @@ router.post(
           const accessToken = oauth2Client.getAccessToken()
           
           const transporter = nodemailer.createTransport({
-              service: "gmail",
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            service: 'Gmail',
               auth: {
                   type: "OAuth2",
                   user: "portfoliocreatoriitd@gmail.com", 
@@ -357,7 +363,10 @@ router.post(
           const accessToken = oauth2Client.getAccessToken()
           
           const transporter = nodemailer.createTransport({
-              service: "gmail",
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            service: 'Gmail',
               auth: {
                   type: "OAuth2",
                   user: "portfoliocreatoriitd@gmail.com", 
