@@ -1,1 +1,2 @@
-export const secretkey = process.env['SECRET'];
+const secretkey = process.env.SECRET;
+export default secretkey;

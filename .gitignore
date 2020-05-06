@@ -64,7 +64,7 @@ typings/
 !*.secret
 
 #dump data
-*.json
+# *.json
 
 .DS_Store
 .vscode/
