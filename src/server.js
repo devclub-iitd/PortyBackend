@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 // online : mongodb+srv://jatin:<password>@cluster0-fyl7v.mongodb.net/test?retryWrites=true&w=majority
 
 mongoose
-    .connect('mongodb://database:27017/porty_backend', {
+    .connect('mongodb+srv://jatin:jatin@cluster0-fyl7v.mongodb.net/test?retryWrites=true&w=majority', {
         useNewUrlParser: true,
         useCreateIndex: true,
         useFindAndModify: false,

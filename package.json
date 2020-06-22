@@ -3,12 +3,11 @@
   "version": "0.0.1",
   "private": false,
   "scripts": {
-    "start": "npm run prod",
+    "start": "node start.js",
     "server": "babel-node ./src/server",
     "server:prod": "node ./dist/server",
     "dev": "node start.js",
     "clean": "rimraf dist",
-    "build": "babel ./src --out-dir dist",
     "prod": "NODE_ENV=production npm-run-all clean build server:prod",
     "watch": "nodemon",
     "eslint-test": "eslint './**/*.js'",
