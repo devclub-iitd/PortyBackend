@@ -9,7 +9,6 @@ import { google } from 'googleapis';
 import nodemailer from 'nodemailer';
 import secretkey from '../../config/keys';
 import User from '../../models/users';
-import 'babel-polyfill';
 
 const { OAuth2 } = google.auth;
 
