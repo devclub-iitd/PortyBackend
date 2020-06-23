@@ -1,6 +1,9 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
+import cors from 'cors';
+import lusca from 'lusca';
+import helmet from 'helmet';
 import user from './routes/api/users';
 import auth from './routes/api/auth';
 import profile from './routes/api/profile';
@@ -10,17 +13,26 @@ const app = express();
 // Body Parser Middleware
 app.use(bodyParser.json());
 
+// General Middleware
+app.use(cors());
+app.use(helmet());
+app.use(lusca.xframe('SAMEORIGIN'));
+app.use(lusca.xssProtection(true));
+
 // for debug purposes:
 // local : mongodb://127.0.0.1/my_database
 // docker : mongodb://database:27017/porty_backend
 // online : mongodb+srv://jatin:<password>@cluster0-fyl7v.mongodb.net/test?retryWrites=true&w=majority
 
 mongoose
-    .connect('mongodb+srv://jatin:jatin@cluster0-fyl7v.mongodb.net/test?retryWrites=true&w=majority', {
-        useNewUrlParser: true,
-        useCreateIndex: true,
-        useFindAndModify: false,
-    })
+    .connect(
+        'mongodb+srv://jatin:jatin@cluster0-fyl7v.mongodb.net/test?retryWrites=true&w=majority',
+        {
+            useNewUrlParser: true,
+            useCreateIndex: true,
+            useFindAndModify: false,
+        }
+    )
     .then(() => {
         console.log('Connected to the database...');
     })
