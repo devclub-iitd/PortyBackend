@@ -100,10 +100,10 @@ router.post(
                                 '"Portfolio Creator👻" <portfoliocreatoriitd@gmail.com>', // sender address
                             to: user.email, // list of receivers
                             subject: 'Email Verification', // Subject line
-                            // text: `http://localhost:5000/api/user/verify/${token}`, // plain text body
+                            // text: `https://porty-backend-devclub.herokuapp.com/api/user/verify/${token}`, // plain text body
                             html: `<h3>Click on the link below to verify your account.</h3>
               <p>
-                  <a href="http://localhost:5000/api/user/verify/${token}">Click Here</a>
+                  <a href="https://porty-backend-devclub.herokuapp.com/api/user/verify/${token}">Click Here</a>
               </p>`, // html body
                         });
 
@@ -237,10 +237,10 @@ router.post(
                                 '"Portfolio Creator👻" <portfoliocreatoriitd@gmail.com>', // sender address
                             to: user.email, // list of receivers
                             subject: 'Email Verification', // Subject line
-                            // text: `http://localhost:5000/api/user/verify/${token}`, // plain text body
+                            // text: `https://porty-backend-devclub.herokuapp.com/api/user/verify/${token}`, // plain text body
                             html: `<h3>Click on the link below to verify your account.</h3>
             <p>
-                <a href="http://localhost:5000/api/user/verify/${token}">Click Here</a>
+                <a href="https://porty-backend-devclub.herokuapp.com/api/user/verify/${token}">Click Here</a>
             </p>`, // html body
                         });
 
@@ -302,7 +302,7 @@ router.get('/verify/:jwt', async (req, res) => {
         founduser.isverified = true;
 
         await founduser.save();
-        res.redirect('http://localhost:3000/validate');
+        res.redirect('https://portfolio.devclub.in/validate');
         res.status(200).json({
             msg:
                 'Your account has been verified..Please login to access your account',
@@ -396,10 +396,10 @@ router.post(
                                 '"Portfolio Creator👻" <portfoliocreatoriitd@gmail.com>', // sender address
                             to: user.email, // list of receivers
                             subject: 'Email Verification', // Subject line
-                            // text: `http://localhost:5000/api/user/verify/${token}`, // plain text body
+                            // text: `https://porty-backend-devclub.herokuapp.com/api/user/verify/${token}`, // plain text body
                             html: `<h3>Click on the link below to change your password.</h3>
               <p>
-                  <a href="http://localhost:5000/api/user/verify/forgot/${token}">Click Here</a>
+                  <a href="https://porty-backend-devclub.herokuapp.com/api/user/verify/forgot/${token}">Click Here</a>
               </p>`, // html body
                         });
 
@@ -448,7 +448,7 @@ router.get('/verify/forgot/:jwt', async (req, res) => {
         founduser.password = await bcrypt.hash(founduser.password, salt);
 
         await founduser.save();
-        res.redirect('http://localhost:3000/resetSucc');
+        res.redirect('https://portfolio.devclub.in/resetSucc');
         res.status(200).json({
             msg: 'Your password has been changed...',
         });
