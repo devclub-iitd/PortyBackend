@@ -73,7 +73,7 @@ router.post(
                 },
             };
 
-            jwt.sign(payload, secretkey, { expiresIn: 60 }, (err, token) => {
+            jwt.sign(payload, secretkey, { expiresIn: 30 }, (err, token) => {
                 if (err) {
                     console.log(err);
                     return null;
