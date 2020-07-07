@@ -47,6 +47,12 @@ router.post(
                 });
             }
 
+            if(user.isverified) {
+                return res.status(400).json({
+                    errors: [{ msg: 'Your account has already been verified' }],
+                });
+            }
+
             // return webtoken
             const payload = {
                 user: {

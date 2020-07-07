@@ -6,7 +6,7 @@ const userSchema = new Schema({
     name: { type: String, required: true },
     date: { type: Date, default: Date.now },
     dob: { type: String },
-    entryno: { type: String, required: true },
+    entryno: { type: String },
     isverified: { type: Boolean, default: false },
 });
 
