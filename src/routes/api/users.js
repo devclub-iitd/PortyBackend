@@ -167,16 +167,6 @@ router.post(
                 });
             }
 
-            user = await User.findOne({ entryno });
-
-            if (user) {
-                return res.status(400).json({
-                    errors: [
-                        { msg: 'User already exists with same entry number' },
-                    ],
-                });
-            }
-
             user = new User(req.body);
 
             // also need to add email verifier via otp
