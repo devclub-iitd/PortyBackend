@@ -39,18 +39,15 @@ router.get('/me', auth, async (req, res) => {
         };
         let i = 0;
 
-        let wc = 0;
-        let ec = 0;
-
         const tempWork = profileUser.work;
         for (i = 0; i < tempWork.length; i += 1) {
-            if (!tempWork[i].hidden) {newprof.work.push(tempWork[i]); wc += 1;}
+            if (!tempWork[i].hidden) newprof.work.push(tempWork[i]);
         }
 
         const tempEducation = profileUser.education;
         for (i = 0; i < tempEducation.length; i += 1) {
             if (!tempEducation[i].hidden)
-                {newprof.education.push(tempEducation[i]); ec += 1;}
+                newprof.education.push(tempEducation[i]); 
         }
 
         const tempVolunteer = profileUser.volunteer;
@@ -93,12 +90,6 @@ router.get('/me', auth, async (req, res) => {
                 newprof.references.push(tempReferences[i]);
         }
 
-        if(wc == 0 || ec == 0) {
-            return res.status(400).json({
-                msg : 'Please select one or more education and work experience to be not hidden'
-            })
-        }
-
         return res.json(newprof);
 
     } catch (err) {
@@ -125,7 +116,7 @@ router.get('/mefull', auth, async (req, res) => {
     }
 });
 
-router.get('/download', async (req, auth, res) => {
+router.get('/download', auth, async (req, res) => {
     try {
         const profileUser = await Profile.findOne({
             user: req.user.id,
@@ -204,19 +195,9 @@ router.get('/download', async (req, auth, res) => {
                 newprof.references.push(tempReferences[i]);
         }
 
-        if(wc == 0 || ec == 0) {
-            return res.status(400).json({
-                msg : 'Please select one or more education and work experience to be not hidden'
-            })
-        }
-
-        fs.writeFile(
+        await fs.writeFile(
             'file.json',
-            JSON.stringify({ profile: newprof }),
-            (err) => {
-                // throws an error, you could also catch it here
-                if (err) return res.status(500).send('Server Error');
-            }
+            JSON.stringify({ profile: newprof })
         );
         
         return res.download('./file.json')
@@ -230,7 +211,6 @@ router.get('/download', async (req, auth, res) => {
 // post to a user id
 router.post('/', auth, async (req, res) => {
     const {
-        entryno,
         age,
         phone,
         education,
@@ -252,7 +232,6 @@ router.post('/', auth, async (req, res) => {
     profileFields.user = req.user.id;
     if (dob) profileFields.dob = dob;
     if (about) profileFields.about = about;
-    if (entryno) profileFields.entryno = entryno;
     if (age) profileFields.age = age;
     if (phone) profileFields.phone = phone;
     if (education) profileFields.education = education;
@@ -265,6 +244,28 @@ router.post('/', auth, async (req, res) => {
     if (interests) profileFields.interests = interests;
     if (references) profileFields.references = references;
     if (location) profileFields.location = location;
+
+    let wc = 0;
+    let ec = 0;
+    let i = 0;
+
+    if(education) {
+        for (i = 0; i < education.length; i += 1) {
+            if (!education[i].hidden) {ec += 1; break;}
+        }
+    } else ec = 1;
+
+    if(work) {
+        for (i = 0; i < work.length; i += 1) {
+            if (!work[i].hidden) {wc += 1; break;}
+        }
+    } else wc = 1;
+
+    if(wc == 0 || ec == 0) {
+        return res.status(400).json({
+            msg : 'Please select one or more education and work experience to be not hidden'
+        })
+    }
 
     try {
         let profile = await Profile.findOne({ user: req.user.id });
