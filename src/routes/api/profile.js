@@ -10,37 +10,122 @@ const fs = require('fs');
 
 const router = express.Router();
 
-// get profile by id for public access by accessing api/profile/user/:user_id
-router.get('/user/:en', async (req, res) => {
+// get profile for logged in user by accessing api/profile/me carrying a jwt
+router.get('/me', auth, async (req, res) => {
     try {
-        const userFound = await User.findOne({ entryno: `${req.params.en}` });
-        if (!userFound)
-            return res.status(400).json({ msg: 'User doesnt exists' });
+        const profileUser = await Profile.findOne({
+            user: req.user.id,
+        }).populate('user', ['name', 'email']);
 
-        const profile = await Profile.findOne({
-            // eslint-disable-next-line no-underscore-dangle
-            user: userFound._id,
-        }).populate('user', ['name', 'email', 'entryno']);
-
-        if (!profile)
+        if (!profileUser) {
             return res
                 .status(400)
-                .json({ msg: 'Profile not found for this user' });
-
-        return res.json(profile);
-    } catch (error) {
-        console.log(error);
-        if (error.kind === 'ObjectId') {
-            return res
-                .status(400)
-                .json({ msg: 'Profile not found for this user' });
+                .json({ msg: "User hasn't set up his/her profile yet" });
         }
-        return res.status(500).send('Server error');
+
+        const newprof = {
+            user: profileUser.user,
+            about: profileUser.about,
+            location: profileUser.location,
+            education: [],
+            work: [],
+            volunteer: [],
+            awards: [],
+            publications: [],
+            skills: [],
+            languages: [],
+            interests: [],
+            references: [],
+        };
+        let i = 0;
+
+        let wc = 0;
+        let ec = 0;
+
+        const tempWork = profileUser.work;
+        for (i = 0; i < tempWork.length; i += 1) {
+            if (!tempWork[i].hidden) {newprof.work.push(tempWork[i]); wc += 1;}
+        }
+
+        const tempEducation = profileUser.education;
+        for (i = 0; i < tempEducation.length; i += 1) {
+            if (!tempEducation[i].hidden)
+                {newprof.education.push(tempEducation[i]); ec += 1;}
+        }
+
+        const tempVolunteer = profileUser.volunteer;
+        for (i = 0; i < tempVolunteer.length; i += 1) {
+            if (!tempVolunteer[i].hidden)
+                newprof.volunteer.push(tempVolunteer[i]);
+        }
+
+        const tempAwards = profileUser.awards;
+        for (i = 0; i < tempAwards.length; i += 1) {
+            if (!tempAwards[i].hidden) newprof.awards.push(tempAwards[i]);
+        }
+
+        const tempPublications = profileUser.publications;
+        for (i = 0; i < tempPublications.length; i += 1) {
+            if (!tempPublications[i].hidden)
+                newprof.publications.push(tempPublications[i]);
+        }
+
+        const tempSkills = profileUser.skills;
+        for (i = 0; i < tempSkills.length; i += 1) {
+            if (!tempSkills[i].hidden) newprof.skills.push(tempSkills[i]);
+        }
+
+        const tempLanguages = profileUser.languages;
+        for (i = 0; i < tempLanguages.length; i += 1) {
+            if (!tempLanguages[i].hidden)
+                newprof.languages.push(tempLanguages[i]);
+        }
+
+        const tempInterests = profileUser.interests;
+        for (i = 0; i < tempInterests.length; i += 1) {
+            if (!tempInterests[i].hidden)
+                newprof.interests.push(tempInterests[i]);
+        }
+
+        const tempReferences = profileUser.references;
+        for (i = 0; i < tempReferences.length; i += 1) {
+            if (!tempReferences[i].hidden)
+                newprof.references.push(tempReferences[i]);
+        }
+
+        if(wc == 0 || ec == 0) {
+            return res.status(400).json({
+                msg : 'Please select one or more education and work experience to be not hidden'
+            })
+        }
+
+        return res.json(newprof);
+
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send('Server Error');
     }
 });
 
-// get profile for logged in user by accessing api/profile/me carrying a jwt
-router.get('/me', auth, async (req, res) => {
+router.get('/mefull', auth, async (req, res) => {
+    try {
+        const profileUser = await Profile.findOne({
+            user: req.user.id,
+        }).populate('user', ['name', 'email']);
+
+        if (!profileUser) {
+            return res
+                .status(400)
+                .json({ msg: "User hasn't set up his/her profile yet" });
+        }
+        return res.json(profileUser);
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send('Server Error');
+    }
+});
+
+router.get('/download', (req, auth, res) => {
     try {
         const profileUser = await Profile.findOne({
             user: req.user.id,
@@ -119,6 +204,12 @@ router.get('/me', auth, async (req, res) => {
                 newprof.references.push(tempReferences[i]);
         }
 
+        if(wc == 0 || ec == 0) {
+            return res.status(400).json({
+                msg : 'Please select one or more education and work experience to be not hidden'
+            })
+        }
+
         fs.writeFile(
             'file.json',
             JSON.stringify({ profile: newprof }),
@@ -127,33 +218,14 @@ router.get('/me', auth, async (req, res) => {
                 if (err) return res.status(500).send('Server Error');
             }
         );
-
-        return res.json(newprof);
+        
+        return res.download('./file.json')
+        
     } catch (err) {
         console.log(err);
         return res.status(500).send('Server Error');
     }
-});
-
-router.get('/mefull', auth, async (req, res) => {
-    try {
-        const profileUser = await Profile.findOne({
-            user: req.user.id,
-        }).populate('user', ['name', 'email']);
-
-        if (!profileUser) {
-            return res
-                .status(400)
-                .json({ msg: "User hasn't set up his/her profile yet" });
-        }
-        return res.json(profileUser);
-    } catch (err) {
-        console.log(err);
-        return res.status(500).send('Server Error');
-    }
-});
-
-router.get('/download', (req, res) => res.download('./file.json'));
+})
 
 // post to a user id
 router.post('/', auth, async (req, res) => {

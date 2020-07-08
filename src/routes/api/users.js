@@ -153,7 +153,7 @@ router.post(
 
         try {
             // see if user exists
-            const { email, entryno } = req.body;
+            const { email } = req.body;
 
             // if(!email.endsWith("@iitd.ac.in")){
             //   return res.status(400).json({ errors: [{ msg: 'Not a valid IITD email address,it should end with a @iitd.ac.in' }] });
@@ -271,13 +271,6 @@ router.post(
         return null;
     }
 );
-
-router.delete('/:id', (req, res) => {
-    User.findByIdAndDelete(req.params.id, (err) => {
-        if (err) res.status(404).json({ success: false });
-        else res.json({ success: true });
-    });
-});
 
 router.get('/verify/:jwt', async (req, res) => {
     const token = req.params.jwt;
