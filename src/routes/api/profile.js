@@ -125,7 +125,7 @@ router.get('/mefull', auth, async (req, res) => {
     }
 });
 
-router.get('/download', (req, auth, res) => {
+router.get('/download', async (req, auth, res) => {
     try {
         const profileUser = await Profile.findOne({
             user: req.user.id,
