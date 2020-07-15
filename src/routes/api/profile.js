@@ -247,6 +247,7 @@ router.post('/', auth, async (req, res) => {
 
     let wc = 0;
     let ec = 0;
+    let lc = 0;
     let i = 0;
 
     if(education) {
@@ -261,9 +262,15 @@ router.post('/', auth, async (req, res) => {
         }
     } else wc = 1;
 
-    if(wc == 0 || ec == 0) {
+    if(languages) {
+        for (i = 0; i < languages.length; i += 1) {
+            if (!languages[i].hidden) {lc += 1; break;}
+        }
+    } else lc = 1;
+
+    if(wc == 0 || ec == 0 || lc == 0) {
         return res.status(400).json({
-            msg : 'Please select one or more education and work experience to be not hidden'
+            msg : 'Please select one or more education, work, language experience to be not hidden'
         })
     }
 

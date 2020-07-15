@@ -7,9 +7,9 @@ const profileSchema = new Schema({
         ref: 'user',
     },
     about: {
-        label: { type: String },
-        summary: { type: String },
-        number: { type: String },
+        label: { type: String, required: true},
+        summary: { type: String, required: true},
+        number: { type: String, required: true},
         imgUrl: { type: String },
     },
     education: [
