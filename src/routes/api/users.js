@@ -167,6 +167,14 @@ router.post(
                 });
             }
 
+            const {name, dob} = req.body;
+
+            if(!name || !dob) {
+                return res.status(400).json({
+                    errors: [{ msg: 'Name and DOB should be non-empty' }],
+                });
+            }
+
             user = new User(req.body);
 
             // also need to add email verifier via otp
