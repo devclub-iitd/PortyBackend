@@ -82,8 +82,8 @@ const profileSchema = new Schema({
     ],
     languages: [
         {
-            language: { type: String },
-            fluency: { type: String },
+            language: { type: String, required: true },
+            fluency: { type: String, required: true },
             hidden: { type: Boolean },
         },
     ],
