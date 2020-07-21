@@ -270,8 +270,8 @@ router.post('/', auth, async (req, res) => {
 
     if(wc == 0 || ec == 0 || lc == 0) {
         return res.status(400).json({
-            msg : 'Please select one or more education, work, language experience to be not hidden'
-        })
+            errors: [{ msg: 'Please select one or more education, work, language experience to be not hidden' }],
+        });
     }
 
     try {
