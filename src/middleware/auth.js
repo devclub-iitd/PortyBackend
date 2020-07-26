@@ -19,18 +19,6 @@ const publicKey = fs.readFileSync(path.resolve(__dirname, './public.pem')); // P
 // Max time remaining for token expiry, after which a refresh request will be sent to the SSO for refreshing the token
 const maxTTL = 2 * 60; // 5 minutes
 
-const UnauthorizedHandler = (req,res) => {
-    return res.status(401).json( {msg : "Alas You are out of scope! Go get some more permissions dude"} );
-}
-
-const ROLES = {
-    '*' : ['external_user'],
-    '/admin': ['dc_core','admin']
-}
-
-// Push the redirectURL to public paths array as the redirectURL should be accessible to all users
-publicPaths.push(redirectURL);
-
 const auth = async (req, res, next) => {
     // Extract tokens from cookies
     const token = req.cookies[accessTokenName];
@@ -38,6 +26,7 @@ const auth = async (req, res, next) => {
 
     try {
         let decoded;
+
         if (!token) {
             if (!refreshToken) {
                 throw jwt.JsonWebTokenError;
@@ -49,7 +38,6 @@ const auth = async (req, res, next) => {
             // Send a refresh request to the SSO Server if the time remaining is less than maxTTL
             const response = await axios.post(SSO_Refresh_URL, { rememberme: refreshToken })
             res.setHeader('set-cookie',response.headers['set-cookie'])
-            
 
         } else {
             decoded = await jwt.verify(token, publicKey, {
@@ -62,12 +50,9 @@ const auth = async (req, res, next) => {
                 res.setHeader('set-cookie', response.headers['set-cookie'])
             }
         }
-
-        if(isAuthorized(req,decoded.user)) { 
-            req.user = decoded.user;
-            next();
-        }
-        else return UnauthorizedHandler(req,res);
+        // all went well, proceed 
+        req.user = decoded.user;
+        next();
 
     } catch (error) {
         req.user = null;
@@ -79,20 +64,5 @@ const auth = async (req, res, next) => {
     }
     
 };
-
-const isAuthorized = (req,user) => {
-    if(Object.keys(ROLES).includes(req.url)){
-        for (const index in ROLES[req.url]) {
-            if (!user.roles.includes(ROLES[req.url][index])) return false;
-        }
-        return true;
-    }
-    if(Object.keys(ROLES).includes('*')){
-        for (const index in ROLES['*']) {
-            if (!user.roles.includes(ROLES['*'][index])) return false;
-        }
-    }
-    return true;
-}
 
 module.exports = auth;

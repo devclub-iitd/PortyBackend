@@ -7,6 +7,7 @@ import helmet from 'helmet';
 import user from './routes/api/users';
 import auth from './routes/api/auth';
 import profile from './routes/api/profile';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(cors());
 app.use(helmet());
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
+app.use(cookieParser());
 
 // for debug purposes:
 // local : mongodb://127.0.0.1/my_database
