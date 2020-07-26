@@ -9,13 +9,14 @@ import { google } from 'googleapis';
 import nodemailer from 'nodemailer';
 import secretkey from '../../config/keys';
 import User from '../../models/users';
+import auth from '../../middleware/auth'
 
 const { OAuth2 } = google.auth;
 
 const router = express.Router();
 
 // find all users
-router.get('/', (req, res) => {
+router.get('/', auth, (req, res) => {
     User.find().then((users) => res.json(users));
 });
 
