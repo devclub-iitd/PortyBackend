@@ -186,7 +186,7 @@ router.post('/', auth, async (req, res) => {
         if (profile) {
             // we need to update
             profile = await Profile.findOneAndUpdate(
-                { user: req.user.id },
+                { sso_id: req.user.id },
                 { $set: profileFields },
                 { new: true }
             );
