@@ -7,21 +7,21 @@ const router = express.Router();
 router.get('/', auth, async (req, res) => {
     try {
         const user = req.user;
-        res.json(user);
+        return res.status(200).json(user);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ errors: [{ msg: 'Server Error' }] });
+        return res.status(500).json({ errors: [{ msg: 'Server Error' }] });
     }
 });
 
 router.post('/logout', auth, async (req, res) => {
     try {
-        res.clearCookie('token')
-        res.clearCookie('rememberme')
-        return res.status(200).json({msg : 'Logged out!!'})
+        res.clearCookie('token');
+        res.clearCookie('rememberme');
+        return res.status(200).json({msg : 'Logged out!!'});
     } catch (err) {
         console.error(err);
-        res.status(500).json({ errors: [{ msg: 'Server Error' }] });
+        return res.status(500).json({ errors: [{ msg: 'Server Error' }] });
     }
 });
 

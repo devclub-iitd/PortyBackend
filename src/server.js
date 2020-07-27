@@ -15,20 +15,15 @@ const app = express();
 app.use(bodyParser.json());
 
 // General Middleware
-app.use(cors({ credentials: true, origin: 'http://localhost:3000' })); // dont put slash after origin name
+app.use(cors({ credentials: true, origin: process.env.CLIENT_URL })); // dont put slash after origin name
 app.use(helmet());
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
 app.use(cookieParser());
 
-// for debug purposes:
-// local : mongodb://127.0.0.1/my_database
-// docker : mongodb://database:27017/porty_backend
-// online : mongodb+srv://jatin:<password>@cluster0-fyl7v.mongodb.net/test?retryWrites=true&w=majority
-
 mongoose
     .connect(
-        'mongodb+srv://jatin:jatin@cluster0-fyl7v.mongodb.net/test?retryWrites=true&w=majority',
+        process.env.DB_URL,
         {
             useNewUrlParser: true,
             useCreateIndex: true,

@@ -190,7 +190,7 @@ router.post('/', auth, async (req, res) => {
                 { $set: profileFields },
                 { new: true }
             );
-            return res.json(profile);
+            return res.status(200).json(profile);
         }
 
         // if a new profile, then set sso_id as req.user.id
@@ -199,7 +199,7 @@ router.post('/', auth, async (req, res) => {
 
         await profile.save();
 
-        return res.json(profile);
+        return res.status(200).json(profile);
     } catch (err) {
         console.log(err);
         return res.status(500).json({ errors: [{ msg: 'Server Error' }] });

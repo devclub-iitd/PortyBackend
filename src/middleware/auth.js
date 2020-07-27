@@ -5,11 +5,8 @@ const fs = require('fs');
 const path = require('path');
 
 // SSO Url for refreshing tokens that are about to expire
-const SSO_Refresh_URL = 'http://localhost:8000/auth/refresh-token';
+const SSO_Refresh_URL = process.env.SSO_REFRESH_URL;
 
-// Client url, this string should be equal to the exact base URL of the client
-// in our case we want to redirect to frontend
-const clientURL = 'http://localhost:3000';
 
 const accessTokenName = 'token'; // The default JWT token name
 const refreshTokenName = 'rememberme'; // Name for remember me style tokens
@@ -59,10 +56,8 @@ const auth = async (req, res, next) => {
         res.clearCookie(accessTokenName);
         res.clearCookie(refreshTokenName);
 
-        return res.status(401).json({ msg : "Not authorized as not logged in..."})
-        
+        return res.status(401).json({ msg : "Not authorized as not logged in..."})   
     }
-    
 };
 
 module.exports = auth;
