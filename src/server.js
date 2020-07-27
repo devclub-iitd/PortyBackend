@@ -15,7 +15,7 @@ const app = express();
 app.use(bodyParser.json());
 
 // General Middleware
-app.use(cors({ credentials: true, origin: 'http://localhost:3000/' }));
+app.use(cors({ credentials: true, origin: 'http://localhost:3000' })); // dont put slash after origin name
 app.use(helmet());
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
