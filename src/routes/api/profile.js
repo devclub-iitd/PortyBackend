@@ -5,7 +5,6 @@ import express from 'express';
 import auth from '../../middleware/auth';
 import Profile from '../../models/profile';
 
-const fs = require('fs');
 
 const router = express.Router();
 
@@ -13,8 +12,8 @@ const router = express.Router();
 router.get('/me', auth, async (req, res) => {
     try {
         const profileUser = await Profile.findOne({
-            user: req.user.id,
-        }).populate('user', ['name', 'email']);
+            sso_id: req.user.id,
+        });
 
         if (!profileUser) {
             return res
@@ -93,15 +92,15 @@ router.get('/me', auth, async (req, res) => {
 
     } catch (err) {
         console.log(err);
-        return res.status(500).send('Server Error');
+        return res.status(500).json({ errors: [{ msg: 'Server Error' }] });
     }
 });
 
 router.get('/mefull', auth, async (req, res) => {
     try {
         const profileUser = await Profile.findOne({
-            user: req.user.id,
-        }).populate('user', ['name', 'email']);
+            sso_id: req.user.id,
+        });
 
         if (!profileUser) {
             return res
@@ -111,13 +110,14 @@ router.get('/mefull', auth, async (req, res) => {
         return res.json(profileUser);
     } catch (err) {
         console.log(err);
-        return res.status(500).send('Server Error');
+        return res.status(500).json({ errors: [{ msg: 'Server Error' }] });
     }
 });
 
 // post to a user id
 router.post('/', auth, async (req, res) => {
     const {
+        user,
         age,
         phone,
         education,
@@ -136,7 +136,7 @@ router.post('/', auth, async (req, res) => {
 
     // Build profile object
     const profileFields = {};
-    profileFields.user = req.user.id;
+    if(user) profileFields.user = user;
     if (dob) profileFields.dob = dob;
     if (about) profileFields.about = about;
     if (age) profileFields.age = age;
@@ -182,25 +182,27 @@ router.post('/', auth, async (req, res) => {
     }
 
     try {
-        let profile = await Profile.findOne({ user: req.user.id });
+        let profile = await Profile.findOne({ sso_id : req.user.id });
         if (profile) {
             // we need to update
             profile = await Profile.findOneAndUpdate(
-                { user: req.user.id },
+                { sso_id: req.user.id },
                 { $set: profileFields },
                 { new: true }
             );
-            return res.json(profile);
+            return res.status(200).json(profile);
         }
 
+        // if a new profile, then set sso_id as req.user.id
+        profileFields.sso_id = req.user.id
         profile = new Profile(profileFields);
 
         await profile.save();
 
-        return res.json(profile);
+        return res.status(200).json(profile);
     } catch (err) {
         console.log(err);
-        return res.status(500).send('Server Error');
+        return res.status(500).json({ errors: [{ msg: 'Server Error' }] });
     }
 });
 

@@ -7,6 +7,9 @@ import helmet from 'helmet';
 import user from './routes/api/users';
 import auth from './routes/api/auth';
 import profile from './routes/api/profile';
+import cookieParser from 'cookie-parser';
+
+require('dotenv').config();
 
 const app = express();
 
@@ -14,23 +17,20 @@ const app = express();
 app.use(bodyParser.json());
 
 // General Middleware
-app.use(cors());
+app.use(cors({ credentials: true, origin: process.env.CLIENT_URL })); // dont put slash after origin name
 app.use(helmet());
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
-
-// for debug purposes:
-// local : mongodb://127.0.0.1/my_database
-// docker : mongodb://database:27017/porty_backend
-// online : mongodb+srv://jatin:<password>@cluster0-fyl7v.mongodb.net/test?retryWrites=true&w=majority
+app.use(cookieParser());
 
 mongoose
     .connect(
-        'mongodb+srv://jatin:jatin@cluster0-fyl7v.mongodb.net/test?retryWrites=true&w=majority',
+        process.env.DB_URL,
         {
             useNewUrlParser: true,
             useCreateIndex: true,
             useFindAndModify: false,
+            useUnifiedTopology: true
         }
     )
     .then(() => {

@@ -2,9 +2,12 @@ import { Schema, model } from 'mongoose';
 
 const profileSchema = new Schema({
     // here add all the rest of the features
+
+    // I use this to store id from SSO, to create one-to-one mapping
+    sso_id: { type: String, required: true},
     user: {
-        type: Schema.Types.ObjectId,
-        ref: 'user',
+        name : { type: String, required: true},
+        email : { type: String, required: true}
     },
     about: {
         label: { type: String, required: true},
