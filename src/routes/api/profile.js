@@ -92,7 +92,7 @@ router.get('/me', auth, async (req, res) => {
 
     } catch (err) {
         console.log(err);
-        return res.status(500).send('Server Error');
+        return res.status(500).json({ errors: [{ msg: 'Server Error' }] });
     }
 });
 
@@ -110,7 +110,7 @@ router.get('/mefull', auth, async (req, res) => {
         return res.json(profileUser);
     } catch (err) {
         console.log(err);
-        return res.status(500).send('Server Error');
+        return res.status(500).json({ errors: [{ msg: 'Server Error' }] });
     }
 });
 
@@ -194,7 +194,7 @@ router.post('/', auth, async (req, res) => {
         }
 
         // if a new profile, then set sso_id as req.user.id
-        profile.sso_id = req.user.id
+        profileFields.sso_id = req.user.id
         profile = new Profile(profileFields);
 
         await profile.save();
@@ -202,7 +202,7 @@ router.post('/', auth, async (req, res) => {
         return res.json(profile);
     } catch (err) {
         console.log(err);
-        return res.status(500).send('Server Error');
+        return res.status(500).json({ errors: [{ msg: 'Server Error' }] });
     }
 });
 
