@@ -9,6 +9,8 @@ import auth from './routes/api/auth';
 import profile from './routes/api/profile';
 import cookieParser from 'cookie-parser';
 
+require('dotenv').config();
+
 const app = express();
 
 // Body Parser Middleware
@@ -28,6 +30,7 @@ mongoose
             useNewUrlParser: true,
             useCreateIndex: true,
             useFindAndModify: false,
+            useUnifiedTopology: true
         }
     )
     .then(() => {

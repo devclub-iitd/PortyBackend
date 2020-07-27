@@ -5,4 +5,4 @@ until nc -z "database" 27017; do
 	sleep 10;
 done
 
-node start.js
+npm start

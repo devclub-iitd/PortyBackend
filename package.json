@@ -30,7 +30,6 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-validator": "^6.0.1",
-    "googleapis": "^49.0.0",
     "helmet": "^3.23.2",
     "jsonwebtoken": "^8.5.1",
     "lusca": "^1.6.1",
