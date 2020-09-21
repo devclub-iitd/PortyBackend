@@ -29,6 +29,7 @@ router.get('/github_deploy', auth, async (req, res) => {
         const payload = {
             client_id : process.env.CLIENT_ID,
             client_secret : process.env.CLIENT_SECRET,
+            code
         }
 
         const accessResponse = await axios.post(
@@ -131,6 +132,9 @@ router.get('/github_deploy', auth, async (req, res) => {
     }
     catch(err) {
         console.log(err)
+        return res.status(400).json({
+            msg : 'Some error occured, please try again :('
+        })
     }
 })
 
