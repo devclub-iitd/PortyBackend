@@ -6,7 +6,7 @@ import auth from '../../middleware/auth'
 import { Octokit } from '@octokit/rest'
 import axios from '../../utils/axios'
 import queryString from 'query-string'
-import { timeout } from '../../utils/utils'
+import { getProfile, timeout } from '../../utils/utils'
 
 const router = express.Router();
 
@@ -19,10 +19,20 @@ router.get('/', auth, (req, res) => {
 // for now only signed in users can do this
 router.get('/github_deploy', auth, async (req, res) => {
 
-    const { code, theme } = req.query;
+    const { code } = req.query;
 
     try {
+
+        // get user data first
+        // get the userdata
+        const profileResponse = await getProfile(res, req.user.id);
+        const profileCorrect = {
+            profile : profileResponse
+        };
+        const profileString = JSON.stringify(profileCorrect);
+        // const profileString = 'hello';
         
+
         // now try to get the access token first -------------------------
         // https://github.com/login/oauth/access_token
 
@@ -97,13 +107,7 @@ router.get('/github_deploy', auth, async (req, res) => {
 
         const { sha } = contentResponse.data;
 
-        // get user data first
-        // get the userdata
-        const profileResponse = await axios.get('api/profile/me');
-        const profileString = JSON.stringify(profileResponse.data);
-        // const profileString = 'hello';
-
-        console.log(profileString);
+        // console.log(profileString);
         
         // update file.json --------------------
         const buffer = new Buffer(profileString);
