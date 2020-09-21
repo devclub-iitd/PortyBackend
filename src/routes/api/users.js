@@ -125,7 +125,7 @@ router.get('/github_deploy', auth, async (req, res) => {
 
         // redirect to frontend --------------------
         return res.status(200).json({
-            msg : 'Successfully deployed potyu!!!';
+            msg : 'Successfully deployed potyu!!!'
         })
 
     }
