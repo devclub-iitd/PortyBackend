@@ -79,7 +79,7 @@ router.get('/github_deploy', auth, async (req, res) => {
         await octokit.repos.createUsingTemplate({
             template_owner : "portfoliocreator",
             template_repo : "portfoliocreator.github.io",
-            name : repo_name,
+            name : repoName,
         });
 
         console.log("repo created")
@@ -101,6 +101,7 @@ router.get('/github_deploy', auth, async (req, res) => {
         // get the userdata
         const profileResponse = await axios.get('api/profile/me');
         const profileString = JSON.stringify(profileResponse.data);
+        // const profileString = 'hello';
 
         console.log(profileString);
         
