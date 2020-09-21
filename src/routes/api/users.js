@@ -4,7 +4,9 @@
 import express from 'express';
 import auth from '../../middleware/auth'
 import { Octokit } from '@octokit/rest'
-import axios from 'axios'
+import axios from '../../utils/axios'
+import queryString from 'query-string'
+import { timeout } from '../../utils/utils'
 
 const router = express.Router();
 
@@ -16,6 +18,7 @@ router.get('/', auth, (req, res) => {
 // route that hits the callback from github oauth
 // for now only signed in users can do this
 router.get('/github_deploy', auth, async (req, res) => {
+
     const { code, theme } = req.query;
 
     try {
@@ -23,49 +26,40 @@ router.get('/github_deploy', auth, async (req, res) => {
         // now try to get the access token first -------------------------
         // https://github.com/login/oauth/access_token
 
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        };
-
         const payload = {
-            client_id : '',
-            client_secret : '',
+            client_id : process.env.CLIENT_ID,
+            client_secret : process.env.CLIENT_SECRET,
         }
 
-        const { accessToken } = await axios.post(
+        const accessResponse = await axios.post(
             'https://github.com/login/oauth/access_token', 
             payload, 
-            config
         );
+
+        const { access_token } = queryString.parse(accessResponse.data);
 
         // create octokit object now using the accesstoken ------------------
         const octokit = new Octokit({
-            auth: accessToken,
+            auth: access_token,
         });
 
         // now delete the repo if possible -----------------------
-        const { data } = await octokit.request("/user");
-        const user_name = data.login;
-        const repo_name = user_name + ".github.io"
+        const userResponse = await octokit.request('/user');
+        const username = userResponse.data.login;
+        const repoName = username + '.github.io';
 
         // console.log(repo_name)
         console.log("Got the user data")
 
-        const response = await octokit.repos.listForUser({
-            username : user_name,
-            type : "public"
+        const repoResponse = await octokit.repos.listForUser({
+            username,
+            type : 'public'
         })
 
-        const repo_list = response.data;
-
-        // console.log(repo_list)
-
+        const repoList = repoResponse.data;
         var ok = 0;
-
-        repo_list.forEach(repo => {
-            if(repo.name == repo_name) {
+        repoList.forEach(repo => {
+            if(repo.name == repoName) {
                 ok = 1;
             }
         });
@@ -73,18 +67,66 @@ router.get('/github_deploy', auth, async (req, res) => {
         if(ok) {
             // only now need to delete the repo
             await octokit.repos.delete({
-                owner : user_name,
-                repo : repo_name,
+                owner : username,
+                repo : repoName,
             });
     
             console.log("repo deleted")
         }
 
         // create the new repo -------------------
+        await octokit.repos.createUsingTemplate({
+            template_owner : "portfoliocreator",
+            template_repo : "portfoliocreator.github.io",
+            name : repo_name,
+        });
 
+        console.log("repo created")
+
+        // maybe have a timeout here
+        await timeout(2000); 
+
+        // get sha of file.json -------------------------
+        // get file.json sha
+        const contentResponse = await octokit.repos.getContent({
+            owner : username,
+            repo : repoName,
+            path : 'Data/file.json'
+        });
+
+        const { sha } = contentResponse.data;
+
+        // get user data first
+        // get the userdata
+        const profileResponse = await axios.get('api/profile/me');
+        const profileString = JSON.stringify(profileResponse.data);
+
+        console.log(profileString);
+        
         // update file.json --------------------
+        const buffer = new Buffer(profileString);
+        const fileContents = buffer.toString('base64');
+
+        // now make the commit
+        await octokit.repos.createOrUpdateFileContents({
+            owner : username,
+            repo : repoName,
+            path : 'Data/file.json',
+            message : 'Update File.json',
+            sha,
+            content : fileContents,
+            committer : {
+                name : "Jatin Prakash",
+                email : "jatinprakash1511@gmail.com"
+            }
+        })
+
+        console.log('commited seuccefully');
 
         // redirect to frontend --------------------
+        return res.status(200).json({
+            msg : 'Successfully deployed potyu!!!';
+        })
 
     }
     catch(err) {
