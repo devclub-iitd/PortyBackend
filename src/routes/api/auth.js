@@ -4,7 +4,7 @@ import auth from '../../middleware/auth';
 const router = express.Router();
 
 // mainly used to check if someone is logged in or not
-router.get('/', auth, async (req, res) => {
+router.get('/', auth, async (req, res) => { 
     try {
         const user = req.user;
         return res.status(200).json(user);

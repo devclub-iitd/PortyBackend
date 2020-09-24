@@ -19,7 +19,8 @@ router.get('/', auth, (req, res) => {
 // for now only signed in users can do this
 router.get('/github_deploy', auth, async (req, res) => {
 
-    const { code } = req.query;
+    const { code, theme } = req.query;
+    console.log("theme is " + theme);
 
     try {
 
@@ -68,7 +69,7 @@ router.get('/github_deploy', auth, async (req, res) => {
         })
 
         const repoList = repoResponse.data;
-        var ok = 0;
+        let ok = 0;
         repoList.forEach(repo => {
             if(repo.name == repoName) {
                 ok = 1;
@@ -76,14 +77,70 @@ router.get('/github_deploy', auth, async (req, res) => {
         });
 
         if(ok) {
-            // only now need to delete the repo
-            await octokit.repos.delete({
-                owner : username,
-                repo : repoName,
-            });
-    
-            console.log("repo deleted")
+            const redirect_uri = 'http://localhost:5000/api/user' + '/delete_repo?access_token=' + access_token;
+            // redirect to confirm page
+            return res.redirect('http://localhost:3000/home?status=confirmation&redirectUrl=' + redirect_uri);
         }
+
+        const createUri = 'http://localhost:5000/api/user/create';
+        return res.redirect(createUri);
+
+    }
+    catch(err) {
+        console.log(err);
+        res.redirect('http://localhost:3000/home?status=fail');
+    }
+})
+
+router.get('/delete_repo', auth, (req,res) => {
+
+    try {
+        const { access_token } = req.query;
+
+        // create octokit object now using the accesstoken ------------------
+        const octokit = new Octokit({
+            auth: access_token,
+        });
+
+        // now delete the repo if possible -----------------------
+        const userResponse = await octokit.request('/user');
+        const username = userResponse.data.login;
+        const repoName = username + '.github.io';
+
+        // console.log(repo_name)
+        console.log("Got the user data")
+
+        // only now need to delete the repo
+        await octokit.repos.delete({
+            owner : username,
+            repo : repoName,
+        });
+
+        console.log("repo deleted")
+
+        const createUri = 'http://localhost:5000/api/user/create';
+        return res.status(200).redirect(createUri);
+
+    } catch (err) {
+        console.log(err);
+        res.redirect('http://localhost:3000/home?status=fail');
+    }
+
+})
+
+router.get('/create', auth, (req,res) => {
+    try {
+        const { access_token } = req.query;
+
+        // create octokit object now using the accesstoken ------------------
+        const octokit = new Octokit({
+            auth: access_token,
+        });
+
+        // now delete the repo if possible -----------------------
+        const userResponse = await octokit.request('/user');
+        const username = userResponse.data.login;
+        const repoName = username + '.github.io';
 
         // create the new repo -------------------
         await octokit.repos.createUsingTemplate({
@@ -130,16 +187,12 @@ router.get('/github_deploy', auth, async (req, res) => {
         console.log('commited seuccefully');
 
         // redirect to frontend --------------------
-        return res.status(200).json({
-            msg : 'Successfully deployed potyu!!!'
-        })
+        return res.status(200).redirect('http://localhost:3000/home?status=success');
 
-    }
-    catch(err) {
-        console.log(err)
-        return res.status(400).json({
-            msg : 'Some error occured, please try again :('
-        })
+
+    } catch (err) {
+        console.log(err);
+        res.redirect('http://localhost:3000/home?status=fail');
     }
 })
 
