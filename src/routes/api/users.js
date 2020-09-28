@@ -23,17 +23,7 @@ router.get('/github_deploy', auth, async (req, res) => {
     console.log("theme is " + theme);
 
     try {
-
-        // get user data first
-        // get the userdata
-        const profileResponse = await getProfile(res, req.user.id);
-        const profileCorrect = {
-            profile : profileResponse
-        };
-        const profileString = JSON.stringify(profileCorrect);
-        // const profileString = 'hello';
         
-
         // now try to get the access token first -------------------------
         // https://github.com/login/oauth/access_token
 
@@ -82,17 +72,17 @@ router.get('/github_deploy', auth, async (req, res) => {
             return res.redirect('http://localhost:3000/home?status=confirmation&redirectUrl=' + redirect_uri);
         }
 
-        const createUri = 'http://localhost:5000/api/user/create';
+        const createUri = 'http://localhost:5000/api/user/create?access_token=' + access_token;
         return res.redirect(createUri);
 
     }
     catch(err) {
         console.log(err);
-        res.redirect('http://localhost:3000/home?status=fail');
+        res.redirect('http://localhost:3000/home?status=error');
     }
 })
 
-router.get('/delete_repo', auth, (req,res) => {
+router.get('/delete_repo', auth, async (req,res) => {
 
     try {
         const { access_token } = req.query;
@@ -118,7 +108,7 @@ router.get('/delete_repo', auth, (req,res) => {
 
         console.log("repo deleted")
 
-        const createUri = 'http://localhost:5000/api/user/create';
+        const createUri = 'http://localhost:5000/api/user/create?access_token=' + access_token;
         return res.status(200).redirect(createUri);
 
     } catch (err) {
@@ -128,9 +118,20 @@ router.get('/delete_repo', auth, (req,res) => {
 
 })
 
-router.get('/create', auth, (req,res) => {
+router.get('/create', auth, async (req,res) => {
+
+    const { access_token } = req.query;
+    
     try {
-        const { access_token } = req.query;
+
+        // get user data first
+        // get the userdata
+        const profileResponse = await getProfile(res, req.user.id);
+        const profileCorrect = {
+            profile : profileResponse
+        };
+        const profileString = JSON.stringify(profileCorrect);
+        // const profileString = 'hello';
 
         // create octokit object now using the accesstoken ------------------
         const octokit = new Octokit({
