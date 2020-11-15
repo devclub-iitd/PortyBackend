@@ -2,11 +2,17 @@
 /* eslint-disable consistent-return */
 
 import express from 'express';
-import auth from '../../middleware/auth'
-import { Octokit } from '@octokit/rest'
-import axios from '../../utils/axios'
-import queryString from 'query-string'
-import { getProfile, timeout, getBackBaseUrl, getFrontBaseUrl, getTemplateUrl } from '../../utils/utils'
+import auth from '../../middleware/auth';
+import { Octokit } from '@octokit/rest';
+import axios from '../../utils/axios';
+import queryString from 'query-string';
+import {
+    getProfile,
+    timeout,
+    getBackBaseUrl,
+    getFrontBaseUrl,
+    getTemplateUrl,
+} from '../../utils/utils';
 
 const router = express.Router();
 
@@ -18,28 +24,26 @@ router.get('/', auth, (req, res) => {
 // route that hits the callback from github oauth
 // for now only signed in users can do this
 router.get('/github_deploy', auth, async (req, res) => {
-
     console.log(req.query);
     const { code, template } = req.query;
     // const { code } = req.query;
-    console.log("template is " + template);
+    console.log('template is ' + template);
 
     try {
-        
         // now try to get the access token first -------------------------
         // https://github.com/login/oauth/access_token
 
         const payload = {
-            client_id : process.env.CLIENT_ID,
-            client_secret : process.env.CLIENT_SECRET,
-            code
-        }
+            client_id: process.env.CLIENT_ID,
+            client_secret: process.env.CLIENT_SECRET,
+            code,
+        };
 
         console.log(payload);
 
         const accessResponse = await axios.post(
-            'https://github.com/login/oauth/access_token', 
-            payload, 
+            'https://github.com/login/oauth/access_token',
+            payload
         );
 
         const { access_token } = queryString.parse(accessResponse.data);
@@ -55,39 +59,46 @@ router.get('/github_deploy', auth, async (req, res) => {
         const repoName = username + '.github.io';
 
         // console.log(repo_name)
-        console.log("Got the user data")
+        console.log('Got the user data');
 
         const repoResponse = await octokit.repos.listForUser({
             username,
-            type : 'public'
-        })
+            type: 'public',
+        });
 
         const repoList = repoResponse.data;
         let isThereARepo = false;
-        repoList.forEach(repo => {
-            if(repo.name == repoName) {
+        repoList.forEach((repo) => {
+            if (repo.name == repoName) {
                 isThereARepo = true;
             }
         });
 
-        if(isThereARepo) {
-            const redirect_uri = getBackBaseUrl() + '/api/user/delete_repo?access_token=' + access_token + '&template=' + template;
+        if (isThereARepo) {
+            const redirect_uri =
+                getBackBaseUrl() +
+                '/api/user/delete_repo?access_token=' +
+                access_token +
+                '&template=' +
+                template;
             // redirect to confirm page
-            return res.redirect(getFrontBaseUrl() + '/home?status=confirmation&redirectUrl=' + redirect_uri);
+            return res.redirect(
+                getFrontBaseUrl() +
+                    '/home?status=confirmation&redirectUrl=' +
+                    redirect_uri
+            );
         }
 
-        const createUri = getBackBaseUrl() + '/api/user/create?access_token=' + access_token;
+        const createUri =
+            getBackBaseUrl() + '/api/user/create?access_token=' + access_token;
         return res.redirect(createUri);
-
-    }
-    catch(err) {
+    } catch (err) {
         console.log(err);
         res.redirect(getFrontBaseUrl() + '/home?status=error');
     }
-})
+});
 
-router.get('/delete_repo', auth, async (req,res) => {
-
+router.get('/delete_repo', auth, async (req, res) => {
     try {
         const { access_token, template } = req.query;
 
@@ -102,38 +113,40 @@ router.get('/delete_repo', auth, async (req,res) => {
         const repoName = username + '.github.io';
 
         // console.log(repo_name)
-        console.log("Got the user data")
+        console.log('Got the user data');
 
         // only now need to delete the repo
         await octokit.repos.delete({
-            owner : username,
-            repo : repoName,
+            owner: username,
+            repo: repoName,
         });
 
-        console.log("repo deleted")
+        console.log('repo deleted');
 
-        const createUri = getBackBaseUrl() + '/api/user/create?access_token=' + access_token + '&template=' + template;
+        const createUri =
+            getBackBaseUrl() +
+            '/api/user/create?access_token=' +
+            access_token +
+            '&template=' +
+            template;
         return res.status(200).redirect(createUri);
-
     } catch (err) {
         console.log(err);
         res.redirect(getFrontBaseUrl() + '/home?status=error');
     }
-})
+});
 
-router.get('/create', auth, async (req,res) => {
-
+router.get('/create', auth, async (req, res) => {
     const { access_token, template } = req.query;
-    
-    try {
 
+    try {
         // get user data first
         // get the userdata
         const profileResponse = await getProfile(res, req.user.id);
         const profileCorrect = {
-            profile : profileResponse
+            profile: profileResponse,
         };
-        
+
         const profileString = JSON.stringify(profileCorrect);
         // const profileString = 'hello';
 
@@ -149,55 +162,55 @@ router.get('/create', auth, async (req,res) => {
 
         // create the new repo -------------------
         await octokit.repos.createUsingTemplate({
-            template_owner : "portfoliocreator",  
-            template_repo : getTemplateUrl(template),
-            name : repoName,
+            template_owner: 'portfoliocreator',
+            template_repo: getTemplateUrl(template),
+            name: repoName,
         });
 
-        console.log("repo created")
+        console.log('repo created');
 
         // NOTE : This is kind of a hack only, maybe a better method ??
         // maybe have a timeout here
-        await timeout(4000); 
+        await timeout(4000);
 
         // get sha of file.json -------------------------
         // get file.json sha
         const contentResponse = await octokit.repos.getContent({
-            owner : username,
-            repo : repoName,
-            path : 'Data/file.json'
+            owner: username,
+            repo: repoName,
+            path: 'Data/file.json',
         });
 
         const { sha } = contentResponse.data;
 
         // console.log(profileString);
-        console.log(sha)
-        
+        console.log(sha);
+
         // update file.json --------------------
         const buffer = new Buffer(profileString);
         const fileContents = buffer.toString('base64');
 
         // now make the commit
         await octokit.repos.createOrUpdateFileContents({
-            owner : username,
-            repo : repoName,
-            path : 'Data/file.json',
-            message : 'Update File.json',
+            owner: username,
+            repo: repoName,
+            path: 'Data/file.json',
+            message: 'Update File.json',
             sha,
-            content : fileContents,
+            content: fileContents,
             // TODO : Decide this ??
-            committer : {
-                name : "portfoliocreator",
-                email : "portfoliocreatoriitd@gmail.com"
-            }
-        })
+            committer: {
+                name: 'portfoliocreator',
+                email: 'portfoliocreatoriitd@gmail.com',
+            },
+        });
 
         console.log('commited successfully');
 
         // redirect to frontend --------------------
-        return res.status(200).redirect(getFrontBaseUrl() + '/home?status=success');
-
-
+        return res
+            .status(200)
+            .redirect(getFrontBaseUrl() + '/home?status=success');
     } catch (err) {
         console.log(err);
         res.redirect(getFrontBaseUrl() + '/home?status=error');

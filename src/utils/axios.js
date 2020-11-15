@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getBackBaseUrl } from './utils'
+import { getBackBaseUrl } from './utils';
 
 export default axios.create({
     baseURL: getBackBaseUrl(),

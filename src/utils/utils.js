@@ -1,13 +1,13 @@
 import Profile from '../models/profile';
 
 export const timeout = (TimeInMs) => {
-    return new Promise(resolve => setTimeout(resolve, TimeInMs));
-}
+    return new Promise((resolve) => setTimeout(resolve, TimeInMs));
+};
 
 export const getProfile = async (res, sso_id) => {
     try {
         const profileUser = await Profile.findOne({
-            sso_id
+            sso_id,
         });
 
         if (!profileUser) {
@@ -40,7 +40,7 @@ export const getProfile = async (res, sso_id) => {
         const tempEducation = profileUser.education;
         for (i = 0; i < tempEducation.length; i += 1) {
             if (!tempEducation[i].hidden)
-                newprof.education.push(tempEducation[i]); 
+                newprof.education.push(tempEducation[i]);
         }
 
         const tempVolunteer = profileUser.volunteer;
@@ -84,37 +84,34 @@ export const getProfile = async (res, sso_id) => {
         }
 
         return newprof;
-
     } catch (err) {
         console.log(err);
         return res.status(500).json({ errors: [{ msg: 'Server Error' }] });
     }
-}
+};
 
 export const getFrontBaseUrl = () => {
     let baseURL;
-    if(process.env.NODE_ENV == 'DEV') {
+    if (process.env.NODE_ENV == 'DEV') {
         baseURL = 'http://localhost:3000';
-    } 
-    else {
-        baseURL = 'https://portfolio.devclub.in'
+    } else {
+        baseURL = 'https://portfolio.devclub.in';
     }
     return baseURL;
-}
+};
 
 export const getBackBaseUrl = () => {
     let baseURL;
-    if(process.env.NODE_ENV === 'DEV') {
+    if (process.env.NODE_ENV === 'DEV') {
         baseURL = 'http://localhost:' + process.env.PORT;
-    } 
-    else {
-        baseURL = 'https://portfolioback.devclub.in'
+    } else {
+        baseURL = 'https://portfolioback.devclub.in';
     }
     return baseURL;
-}
+};
 
 // TODO : create mapping function here.
 export const getTemplateUrl = (template_no) => {
     // for now return the basic URL
-    return "portfoliocreator.github.io"
-}
+    return 'portfoliocreator.github.io';
+};

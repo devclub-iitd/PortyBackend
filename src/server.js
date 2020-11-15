@@ -24,15 +24,12 @@ app.use(lusca.xssProtection(true));
 app.use(cookieParser());
 
 mongoose
-    .connect(
-        process.env.DB_URL,
-        {
-            useNewUrlParser: true,
-            useCreateIndex: true,
-            useFindAndModify: false,
-            useUnifiedTopology: true
-        }
-    )
+    .connect(process.env.DB_URL, {
+        useNewUrlParser: true,
+        useCreateIndex: true,
+        useFindAndModify: false,
+        useUnifiedTopology: true,
+    })
     .then(() => {
         console.log('Connected to the database...');
     })
