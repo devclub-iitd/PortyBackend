@@ -6,7 +6,7 @@ import auth from '../../middleware/auth'
 import { Octokit } from '@octokit/rest'
 import axios from '../../utils/axios'
 import queryString from 'query-string'
-import { getProfile, timeout } from '../../utils/utils'
+import { getProfile, timeout, getBackBaseUrl, getFrontBaseUrl, getTemplateUrl } from '../../utils/utils'
 
 const router = express.Router();
 
@@ -19,8 +19,8 @@ router.get('/', auth, (req, res) => {
 // for now only signed in users can do this
 router.get('/github_deploy', auth, async (req, res) => {
 
-    const { code, theme } = req.query;
-    console.log("theme is " + theme);
+    const { code, template } = req.query;
+    console.log("template is " + template);
 
     try {
         
@@ -59,33 +59,33 @@ router.get('/github_deploy', auth, async (req, res) => {
         })
 
         const repoList = repoResponse.data;
-        let ok = 0;
+        let isThereARepo = false;
         repoList.forEach(repo => {
             if(repo.name == repoName) {
-                ok = 1;
+                isThereARepo = true;
             }
         });
 
-        if(ok) {
-            const redirect_uri = 'http://localhost:5000/api/user' + '/delete_repo?access_token=' + access_token;
+        if(isThereARepo) {
+            const redirect_uri = getBackBaseUrl() + '/api/user/delete_repo?access_token=' + access_token + '&template=' + template;
             // redirect to confirm page
-            return res.redirect('http://localhost:3000/home?status=confirmation&redirectUrl=' + redirect_uri);
+            return res.redirect(getFrontBaseUrl() + '/home?status=confirmation&redirectUrl=' + redirect_uri);
         }
 
-        const createUri = 'http://localhost:5000/api/user/create?access_token=' + access_token;
+        const createUri = getBackBaseUrl() + '/api/user/create?access_token=' + access_token;
         return res.redirect(createUri);
 
     }
     catch(err) {
         console.log(err);
-        res.redirect('http://localhost:3000/home?status=error');
+        res.redirect(getFrontBaseUrl() + '/home?status=error');
     }
 })
 
 router.get('/delete_repo', auth, async (req,res) => {
 
     try {
-        const { access_token } = req.query;
+        const { access_token, template } = req.query;
 
         // create octokit object now using the accesstoken ------------------
         const octokit = new Octokit({
@@ -108,19 +108,18 @@ router.get('/delete_repo', auth, async (req,res) => {
 
         console.log("repo deleted")
 
-        const createUri = 'http://localhost:5000/api/user/create?access_token=' + access_token;
+        const createUri = getBackBaseUrl() + '/api/user/create?access_token=' + access_token + '&template=' + template;
         return res.status(200).redirect(createUri);
 
     } catch (err) {
         console.log(err);
-        res.redirect('http://localhost:3000/home?status=fail');
+        res.redirect(getFrontBaseUrl() + '/home?status=fail');
     }
-
 })
 
 router.get('/create', auth, async (req,res) => {
 
-    const { access_token } = req.query;
+    const { access_token, template } = req.query;
     
     try {
 
@@ -130,6 +129,7 @@ router.get('/create', auth, async (req,res) => {
         const profileCorrect = {
             profile : profileResponse
         };
+        
         const profileString = JSON.stringify(profileCorrect);
         // const profileString = 'hello';
 
@@ -145,8 +145,8 @@ router.get('/create', auth, async (req,res) => {
 
         // create the new repo -------------------
         await octokit.repos.createUsingTemplate({
-            template_owner : "portfoliocreator",
-            template_repo : "portfoliocreator.github.io",
+            template_owner : "portfoliocreator",  
+            template_repo : getTemplateUrl(template),
             name : repoName,
         });
 
@@ -188,12 +188,12 @@ router.get('/create', auth, async (req,res) => {
         console.log('commited seuccefully');
 
         // redirect to frontend --------------------
-        return res.status(200).redirect('http://localhost:3000/home?status=success');
+        return res.status(200).redirect(getFrontBaseUrl() + '/home?status=success');
 
 
     } catch (err) {
         console.log(err);
-        res.redirect('http://localhost:3000/home?status=fail');
+        res.redirect(getFrontBaseUrl() + '/home?status=fail');
     }
 })
 

@@ -91,3 +91,30 @@ export const getProfile = async (res, sso_id) => {
         return res.status(500).json({ errors: [{ msg: 'Server Error' }] });
     }
 }
+
+export const getFrontBaseUrl = () => {
+    let baseURL;
+    if(process.env.NODE_ENV == 'DEV') {
+        baseURL = 'http://localhost:3000';
+    } 
+    else {
+        baseURL = 'https://portfolio.devclub.in'
+    }
+    return baseURL;
+}
+
+export const getBackBaseUrl = () => {
+    let baseURL;
+    if(process.env.NODE_ENV == 'DEV') {
+        baseURL = 'http://localhost' + process.env.PORT;
+    } 
+    else {
+        baseURL = 'https://portfolioback.devclub.in'
+    }
+    return baseURL;
+}
+
+export const getTemplateUrl = (template_no) => {
+    // for now return the basic URL
+    return "portfoliocreator.github.io"
+}
