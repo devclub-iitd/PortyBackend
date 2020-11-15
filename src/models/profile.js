@@ -4,46 +4,46 @@ const profileSchema = new Schema({
     // here add all the rest of the features
 
     // I use this to store id from SSO, to create one-to-one mapping
-    sso_id: { type: String, required: true},
+    sso_id: { type: String, required: true },
     user: {
-        name : { type: String, required: true},
-        email : { type: String, required: true}
+        name: { type: String, required: true },
+        email: { type: String, required: true },
     },
     about: {
-        label: { type: String, required: true},
-        summary: { type: String, required: true},
-        number: { type: String, required: true},
+        label: { type: String, required: true },
+        summary: { type: String, required: true },
+        number: { type: String, required: true },
         imgUrl: { type: String },
     },
     education: [
         {
-            institution: { type: String , required: true},
-            qualification: { type: String , required: true},
-            area: { type: String , required: true},
-            startdate: { type: String , required: true},
-            enddate: { type: String , required: true},
-            gpa: { type: String , required: true},
+            institution: { type: String, required: true },
+            qualification: { type: String, required: true },
+            area: { type: String, required: true },
+            startdate: { type: String, required: true },
+            enddate: { type: String, required: true },
+            gpa: { type: String, required: true },
             details: { type: String, required: true },
             hidden: { type: Boolean },
         },
     ],
     work: [
         {
-            company: { type: String , required: true},
-            position: { type: String , required: true},
+            company: { type: String, required: true },
+            position: { type: String, required: true },
             website: { type: String },
-            startdate: { type: String , required: true},
-            enddate: { type: String , required: true},
-            summary: { type: String , required: true},
+            startdate: { type: String, required: true },
+            enddate: { type: String, required: true },
+            summary: { type: String, required: true },
             hidden: { type: Boolean },
         },
     ],
     location: {
-        addressline1: { type: String , required: true},
-        addressline2: { type: String , required: true},
-        city: { type: String , required: true},
-        pincode: { type: String , required: true},
-        country: { type: String , required: true},
+        addressline1: { type: String, required: true },
+        addressline2: { type: String, required: true },
+        city: { type: String, required: true },
+        pincode: { type: String, required: true },
+        country: { type: String, required: true },
     },
     volunteer: [
         {

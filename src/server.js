@@ -4,10 +4,10 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import lusca from 'lusca';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import user from './routes/api/users';
 import auth from './routes/api/auth';
 import profile from './routes/api/profile';
-import cookieParser from 'cookie-parser';
 
 require('dotenv').config();
 
@@ -24,15 +24,12 @@ app.use(lusca.xssProtection(true));
 app.use(cookieParser());
 
 mongoose
-    .connect(
-        process.env.DB_URL,
-        {
-            useNewUrlParser: true,
-            useCreateIndex: true,
-            useFindAndModify: false,
-            useUnifiedTopology: true
-        }
-    )
+    .connect(process.env.DB_URL, {
+        useNewUrlParser: true,
+        useCreateIndex: true,
+        useFindAndModify: false,
+        useUnifiedTopology: true,
+    })
     .then(() => {
         console.log('Connected to the database...');
     })

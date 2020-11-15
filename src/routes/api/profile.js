@@ -5,7 +5,6 @@ import express from 'express';
 import auth from '../../middleware/auth';
 import Profile from '../../models/profile';
 
-
 const router = express.Router();
 
 // get profile for logged in user by accessing api/profile/me carrying a jwt
@@ -45,7 +44,7 @@ router.get('/me', auth, async (req, res) => {
         const tempEducation = profileUser.education;
         for (i = 0; i < tempEducation.length; i += 1) {
             if (!tempEducation[i].hidden)
-                newprof.education.push(tempEducation[i]); 
+                newprof.education.push(tempEducation[i]);
         }
 
         const tempVolunteer = profileUser.volunteer;
@@ -89,7 +88,6 @@ router.get('/me', auth, async (req, res) => {
         }
 
         return res.json(newprof);
-
     } catch (err) {
         console.log(err);
         return res.status(500).json({ errors: [{ msg: 'Server Error' }] });
@@ -136,7 +134,7 @@ router.post('/', auth, async (req, res) => {
 
     // Build profile object
     const profileFields = {};
-    if(user) profileFields.user = user;
+    if (user) profileFields.user = user;
     if (dob) profileFields.dob = dob;
     if (about) profileFields.about = about;
     if (age) profileFields.age = age;
@@ -157,32 +155,46 @@ router.post('/', auth, async (req, res) => {
     let lc = 0;
     let i = 0;
 
-    if(education) {
+    if (education) {
         for (i = 0; i < education.length; i += 1) {
-            if (!education[i].hidden) {ec += 1; break;}
+            if (!education[i].hidden) {
+                ec += 1;
+                break;
+            }
         }
     } else ec = 1;
 
-    if(work) {
+    if (work) {
         for (i = 0; i < work.length; i += 1) {
-            if (!work[i].hidden) {wc += 1; break;}
+            if (!work[i].hidden) {
+                wc += 1;
+                break;
+            }
         }
     } else wc = 1;
 
-    if(languages) {
+    if (languages) {
         for (i = 0; i < languages.length; i += 1) {
-            if (!languages[i].hidden) {lc += 1; break;}
+            if (!languages[i].hidden) {
+                lc += 1;
+                break;
+            }
         }
     } else lc = 1;
 
-    if(wc == 0 || ec == 0 || lc == 0) {
+    if (wc === 0 || ec === 0 || lc === 0) {
         return res.status(400).json({
-            errors: [{ msg: 'Please select one or more education, work, language experience to be not hidden' }],
+            errors: [
+                {
+                    msg:
+                        'Please select one or more education, work, language experience to be not hidden',
+                },
+            ],
         });
     }
 
     try {
-        let profile = await Profile.findOne({ sso_id : req.user.id });
+        let profile = await Profile.findOne({ sso_id: req.user.id });
         if (profile) {
             // we need to update
             profile = await Profile.findOneAndUpdate(
@@ -194,7 +206,7 @@ router.post('/', auth, async (req, res) => {
         }
 
         // if a new profile, then set sso_id as req.user.id
-        profileFields.sso_id = req.user.id
+        profileFields.sso_id = req.user.id;
         profile = new Profile(profileFields);
 
         await profile.save();

@@ -20,6 +20,7 @@
     "devStart": "nodemon --ignore dist/ -e coffee,js,ejs,css --exec npm start"
   },
   "dependencies": {
+    "@octokit/rest": "^18.0.6",
     "axios": "^0.19.2",
     "babel-cli": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
@@ -36,6 +37,7 @@
     "mongoose": "^5.7.5",
     "nodemailer": "^6.2.1",
     "npm-run-all": "^4.1.5",
+    "query-string": "^6.13.2",
     "rimraf": "^2.6.3"
   },
   "devDependencies": {

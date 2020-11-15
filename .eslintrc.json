@@ -13,6 +13,7 @@
     },
     "plugins": ["prettier"],
     "rules": {
-        "no-console": "off" // TODO: Find better Console object
+        "no-console": "off", // TODO: Find better Console object
+        "camelcase": "off"
     }
 }
