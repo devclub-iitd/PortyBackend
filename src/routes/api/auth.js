@@ -6,7 +6,7 @@ const router = express.Router();
 // mainly used to check if someone is logged in or not
 router.get('/', auth, async (req, res) => {
     try {
-        const user = req.user;
+        const { user } = req;
         return res.status(200).json(user);
     } catch (err) {
         console.error(err);

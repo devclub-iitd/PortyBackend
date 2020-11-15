@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 // middleware function to use to interact with auth server
 const axios = require('axios');
 const jwt = require('jsonwebtoken');

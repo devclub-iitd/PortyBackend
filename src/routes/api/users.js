@@ -1,11 +1,12 @@
 // TODO fix return problems
 /* eslint-disable consistent-return */
+/* eslint-disable no-buffer-constructor */
 
 import express from 'express';
-import auth from '../../middleware/auth';
 import { Octokit } from '@octokit/rest';
-import axios from '../../utils/axios';
 import queryString from 'query-string';
+import auth from '../../middleware/auth';
+import axios from '../../utils/axios';
 import {
     getProfile,
     timeout,
@@ -27,7 +28,7 @@ router.get('/github_deploy', auth, async (req, res) => {
     console.log(req.query);
     const { code, template } = req.query;
     // const { code } = req.query;
-    console.log('template is ' + template);
+    console.log(`template is ${template}`);
 
     try {
         // now try to get the access token first -------------------------
@@ -56,7 +57,7 @@ router.get('/github_deploy', auth, async (req, res) => {
         // now delete the repo if possible -----------------------
         const userResponse = await octokit.request('/user');
         const username = userResponse.data.login;
-        const repoName = username + '.github.io';
+        const repoName = `${username}.github.io`;
 
         // console.log(repo_name)
         console.log('Got the user data');
@@ -69,32 +70,24 @@ router.get('/github_deploy', auth, async (req, res) => {
         const repoList = repoResponse.data;
         let isThereARepo = false;
         repoList.forEach((repo) => {
-            if (repo.name == repoName) {
+            if (repo.name === repoName) {
                 isThereARepo = true;
             }
         });
 
         if (isThereARepo) {
-            const redirect_uri =
-                getBackBaseUrl() +
-                '/api/user/delete_repo?access_token=' +
-                access_token +
-                '&template=' +
-                template;
+            const redirect_uri = `${getBackBaseUrl()}/api/user/delete_repo?access_token=${access_token}&template=${template}`;
             // redirect to confirm page
             return res.redirect(
-                getFrontBaseUrl() +
-                    '/home?status=confirmation&redirectUrl=' +
-                    redirect_uri
+                `${getFrontBaseUrl()}/home?status=confirmation&redirectUrl=${redirect_uri}`
             );
         }
 
-        const createUri =
-            getBackBaseUrl() + '/api/user/create?access_token=' + access_token;
+        const createUri = `${getBackBaseUrl()}/api/user/create?access_token=${access_token}`;
         return res.redirect(createUri);
     } catch (err) {
         console.log(err);
-        res.redirect(getFrontBaseUrl() + '/home?status=error');
+        res.redirect(`${getFrontBaseUrl()}/home?status=error`);
     }
 });
 
@@ -110,7 +103,7 @@ router.get('/delete_repo', auth, async (req, res) => {
         // now delete the repo if possible -----------------------
         const userResponse = await octokit.request('/user');
         const username = userResponse.data.login;
-        const repoName = username + '.github.io';
+        const repoName = `${username}.github.io`;
 
         // console.log(repo_name)
         console.log('Got the user data');
@@ -123,16 +116,11 @@ router.get('/delete_repo', auth, async (req, res) => {
 
         console.log('repo deleted');
 
-        const createUri =
-            getBackBaseUrl() +
-            '/api/user/create?access_token=' +
-            access_token +
-            '&template=' +
-            template;
+        const createUri = `${getBackBaseUrl()}/api/user/create?access_token=${access_token}&template=${template}`;
         return res.status(200).redirect(createUri);
     } catch (err) {
         console.log(err);
-        res.redirect(getFrontBaseUrl() + '/home?status=error');
+        res.redirect(`${getFrontBaseUrl()}/home?status=error`);
     }
 });
 
@@ -158,7 +146,7 @@ router.get('/create', auth, async (req, res) => {
         // now delete the repo if possible -----------------------
         const userResponse = await octokit.request('/user');
         const username = userResponse.data.login;
-        const repoName = username + '.github.io';
+        const repoName = `${username}.github.io`;
 
         // create the new repo -------------------
         await octokit.repos.createUsingTemplate({
@@ -210,10 +198,10 @@ router.get('/create', auth, async (req, res) => {
         // redirect to frontend --------------------
         return res
             .status(200)
-            .redirect(getFrontBaseUrl() + '/home?status=success');
+            .redirect(`${getFrontBaseUrl()}/home?status=success`);
     } catch (err) {
         console.log(err);
-        res.redirect(getFrontBaseUrl() + '/home?status=error');
+        res.redirect(`${getFrontBaseUrl()}/home?status=error`);
     }
 });
 

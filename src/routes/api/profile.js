@@ -182,7 +182,7 @@ router.post('/', auth, async (req, res) => {
         }
     } else lc = 1;
 
-    if (wc == 0 || ec == 0 || lc == 0) {
+    if (wc === 0 || ec === 0 || lc === 0) {
         return res.status(400).json({
             errors: [
                 {
