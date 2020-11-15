@@ -1,6 +1,5 @@
 import Profile from '../models/profile';
 
-// move this to utils
 export const timeout = (TimeInMs) => {
     return new Promise(resolve => setTimeout(resolve, TimeInMs));
 }
@@ -114,6 +113,7 @@ export const getBackBaseUrl = () => {
     return baseURL;
 }
 
+// TODO : create mapping function here.
 export const getTemplateUrl = (template_no) => {
     // for now return the basic URL
     return "portfoliocreator.github.io"
