@@ -105,8 +105,8 @@ export const getFrontBaseUrl = () => {
 
 export const getBackBaseUrl = () => {
     let baseURL;
-    if(process.env.NODE_ENV == 'DEV') {
-        baseURL = 'http://localhost' + process.env.PORT;
+    if(process.env.NODE_ENV === 'DEV') {
+        baseURL = 'http://localhost:' + process.env.PORT;
     } 
     else {
         baseURL = 'https://portfolioback.devclub.in'

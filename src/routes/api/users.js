@@ -19,7 +19,9 @@ router.get('/', auth, (req, res) => {
 // for now only signed in users can do this
 router.get('/github_deploy', auth, async (req, res) => {
 
+    console.log(req.query);
     const { code, template } = req.query;
+    // const { code } = req.query;
     console.log("template is " + template);
 
     try {
@@ -32,6 +34,8 @@ router.get('/github_deploy', auth, async (req, res) => {
             client_secret : process.env.CLIENT_SECRET,
             code
         }
+
+        console.log(payload);
 
         const accessResponse = await axios.post(
             'https://github.com/login/oauth/access_token', 
@@ -113,7 +117,7 @@ router.get('/delete_repo', auth, async (req,res) => {
 
     } catch (err) {
         console.log(err);
-        res.redirect(getFrontBaseUrl() + '/home?status=fail');
+        res.redirect(getFrontBaseUrl() + '/home?status=error');
     }
 })
 
@@ -152,8 +156,9 @@ router.get('/create', auth, async (req,res) => {
 
         console.log("repo created")
 
+        // NOTE : This is kind of a hack only, maybe a better method ??
         // maybe have a timeout here
-        await timeout(2000); 
+        await timeout(4000); 
 
         // get sha of file.json -------------------------
         // get file.json sha
@@ -166,6 +171,7 @@ router.get('/create', auth, async (req,res) => {
         const { sha } = contentResponse.data;
 
         // console.log(profileString);
+        console.log(sha)
         
         // update file.json --------------------
         const buffer = new Buffer(profileString);
@@ -180,12 +186,12 @@ router.get('/create', auth, async (req,res) => {
             sha,
             content : fileContents,
             committer : {
-                name : "Jatin Prakash",
-                email : "jatinprakash1511@gmail.com"
+                name : "portfoliocreator",
+                email : "portfoliocreatoriitd@gmail.com"
             }
         })
 
-        console.log('commited seuccefully');
+        console.log('commited successfully');
 
         // redirect to frontend --------------------
         return res.status(200).redirect(getFrontBaseUrl() + '/home?status=success');
@@ -193,8 +199,8 @@ router.get('/create', auth, async (req,res) => {
 
     } catch (err) {
         console.log(err);
-        res.redirect(getFrontBaseUrl() + '/home?status=fail');
+        res.redirect(getFrontBaseUrl() + '/home?status=error');
     }
-})
+});
 
 export default router;
