@@ -35,7 +35,7 @@
     "jsonwebtoken": "^8.5.1",
     "lusca": "^1.6.1",
     "mongoose": "^5.7.5",
-    "nodemailer": "^6.2.1",
+    "nodemailer": "^6.4.16",
     "npm-run-all": "^4.1.5",
     "query-string": "^6.13.2",
     "rimraf": "^2.6.3"
